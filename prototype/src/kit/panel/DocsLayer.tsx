@@ -30,11 +30,15 @@ const elementAt = (x: number, y: number): Element | null => {
   }
 };
 
-/** The requirements an element shows: its own `Req` first, then those around it up to the screen. */
+/**
+ * The requirements of the element at a point: its own `Req` first, then those around it
+ * up to the screen. The point is kept: a tall element's card stands by the pointer.
+ */
 const chainOf = (
-  el: Element | null,
-): { el: Element; reqs: Requirement[] } | null => {
-  const own = el?.closest("[data-req]");
+  x: number,
+  y: number,
+): { el: Element; reqs: Requirement[]; x: number; y: number } | null => {
+  const own = elementAt(x, y)?.closest("[data-req]");
   if (!own) return null;
   const reqs: Requirement[] = [];
   for (
@@ -45,7 +49,7 @@ const chainOf = (
     const r = requirement(at.getAttribute("data-req") ?? "");
     if (r && !reqs.some((x) => x.to === r.to)) reqs.push(r);
   }
-  return { el: own, reqs };
+  return { el: own, reqs, x, y };
 };
 
 const CARD_W = 320;
@@ -73,7 +77,7 @@ export const DocsLayer: FC = () => {
     const move = (e: PointerEvent) => {
       // Over the card the frame stays where it was, so its link can be reached.
       if ((e.target as Element | null)?.closest?.(PANEL)) return;
-      setHover(chainOf(elementAt(e.clientX, e.clientY)));
+      setHover(chainOf(e.clientX, e.clientY));
     };
     // The product must not react while the tester reads it: presses go to the card instead.
     const swallow = (e: Event) => {
@@ -84,7 +88,7 @@ export const DocsLayer: FC = () => {
     const click = (e: MouseEvent) => {
       if ((e.target as Element | null)?.closest?.(PANEL)) return;
       swallow(e);
-      setPinned(chainOf(elementAt(e.clientX, e.clientY)));
+      setPinned(chainOf(e.clientX, e.clientY));
     };
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOn(false);
@@ -124,15 +128,20 @@ export const DocsLayer: FC = () => {
   if (!on) return null;
   const shown = pinned ?? hover;
   const box = shown?.el.getBoundingClientRect();
-  // Under the element if the card fits, else above it, else as low as the screen allows.
-  // The mode's own bar holds the bottom 60 px: the card stays above it.
+  // A tall element (a whole list, a screen) would push the card off it or under it: the
+  // card stands by the pointer instead. Then under the anchor if the card fits, else
+  // above it, else as low as the screen allows; the mode's bar holds the bottom 60 px.
+  const anchor =
+    box && shown && box.height > window.innerHeight / 3
+      ? { top: shown.y - 12, bottom: shown.y + 12, left: shown.x - 24 }
+      : box;
   const floor = window.innerHeight - 60;
-  const top = !box
+  const top = !anchor
     ? 0
-    : box.bottom + 8 + cardH <= floor
-      ? box.bottom + 8
-      : box.top - 8 - cardH >= 8
-        ? box.top - 8 - cardH
+    : anchor.bottom + 8 + cardH <= floor
+      ? anchor.bottom + 8
+      : anchor.top - 8 - cardH >= 8
+        ? anchor.top - 8 - cardH
         : Math.max(8, floor - cardH);
 
   return (
@@ -163,19 +172,26 @@ export const DocsLayer: FC = () => {
           style={{
             left: Math.max(
               8,
-              Math.min(box.left, window.innerWidth - CARD_W - 8),
+              Math.min(anchor?.left ?? 0, window.innerWidth - CARD_W - 8),
             ),
             top,
           }}
         >
           {shown.reqs.map((r, i) => (
             <div key={r.to} className={i > 0 ? "border-t pt-3" : undefined}>
-              <p className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              <p
+                className={`flex items-center gap-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase ${pinned && i === 0 ? "pr-6" : ""}`}
+              >
                 <BookOpen className="size-3.5" /> {r.title}
               </p>
+              {/* Hovering previews; a pinned card reads in full. */}
               <p
                 className={
-                  i > 0 ? "mt-1 line-clamp-2 text-muted-foreground" : "mt-1.5"
+                  i > 0
+                    ? "mt-1 line-clamp-2 text-muted-foreground"
+                    : pinned
+                      ? "mt-1.5"
+                      : "mt-1.5 line-clamp-5"
                 }
               >
                 {r.text.replace(/\*\*/g, "")}
@@ -190,6 +206,9 @@ export const DocsLayer: FC = () => {
               </a>
             </div>
           ))}
+          {!pinned && (
+            <p className="text-xs text-muted-foreground">{t.pinHint}</p>
+          )}
           {pinned && (
             <button
               type="button"

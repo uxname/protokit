@@ -56,6 +56,7 @@ const en = {
   docsModeHint:
     "Outlines what the documents describe. Hover an element to read its paragraph, click to pin it, Esc to leave.",
   openInDocs: "Open in the documents",
+  pinHint: "Click to pin it and read in full",
   notShownTitle: "Not on any screen",
   notShownHint: "Requirements the screens cannot show, and why.",
   noSuchParagraph: "no such paragraph",
@@ -123,6 +124,7 @@ const ru: typeof en = {
   docsModeHint:
     "Обводит то, что описано в документах. Наведите на элемент — появится его абзац, щелчок закрепит карточку, Esc — выход.",
   openInDocs: "Открыть в документах",
+  pinHint: "Щелчок — закрепить и прочитать целиком",
   notShownTitle: "Чего нет на экранах",
   notShownHint: "Требования, которые экраны показать не могут, и почему.",
   noSuchParagraph: "нет такого абзаца",
