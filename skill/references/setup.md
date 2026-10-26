@@ -76,6 +76,27 @@ npm run test:e2e     # builds, serves, runs the panel checks and the paths
 
 Done when both exit 0.
 
+## Updating the kit
+
+protokit improves; a prototype made earlier takes the improvements by copying the kit,
+never by editing it in place.
+
+```bash
+npx -y degit uxname/protokit/prototype /tmp/protokit-latest --force
+```
+
+1. Compare: `diff -r /tmp/protokit-latest/src/kit prototype/src/kit`, the same for
+   `src/ui`, `scripts/`, `tests/helpers.ts`, `tests/smoke.spec.ts`, `src/main.tsx`,
+   `src/index.css` and the `scripts` and dependencies of `package.json`, `playwright.config.ts`,
+   `vite.config.ts`, `tsconfig.json`, `biome.json`, `.gitignore`. No difference — done.
+2. Copy the kit's files over the project's (primitives the project added to `src/ui`
+   stay), bring the kit's `package.json` scripts and dependency versions over without
+   dropping the project's own, `npm install`.
+3. Read what changed in the kit (`git log` of protokit, the skill) — a kit change can
+   ask something of the product code (a renamed helper, a new contract field).
+4. `npm run check` and `npm run test:e2e`; the screenshots go to the critic only if the
+   look changed.
+
 ## Migrating an existing prototype
 
 A prototype built on an older base (LiteFront, the former `litefront-prototype` skill)

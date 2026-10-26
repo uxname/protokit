@@ -56,12 +56,16 @@ other. `<skill>` below is this skill's folder.
    the `docspace` skill (connection, draft branch).
 2. **Documents in docc.** Markdown documentation — convert it by
    [references/markdown-to-docc.md](references/markdown-to-docc.md), asking first.
-3. **The prototype exists.** No `prototype/` — set it up by
-   [references/setup.md](references/setup.md). Done when `npm run check` in
-   `prototype/` exits 0.
+3. **The prototype exists, its kit is current.** No `prototype/` — set it up by
+   [references/setup.md](references/setup.md). An existing one — compare its kit with
+   the latest protokit and update it by "Updating the kit" there. Done when
+   `npm run check` in `prototype/` exits 0.
 4. **Sync before work.** From the root: `docc validate --format json --max-diagnostics 0`
    and `node <skill>/scripts/check-sync.mjs`. Work through every DOC209, DOC402,
-   DOC401 and uncovered anchor by [references/sync.md](references/sync.md).
+   DOC401 and uncovered anchor by [references/sync.md](references/sync.md). Readers'
+   comments on the documents (`docc comments --format json`, or Docspace) are requests:
+   name the open ones in the report; one the user agrees to changes the paragraph, and
+   the prototype follows it as any DOC209.
 5. **The user's task.** A new prototype — paths and world first, screens after, by
    [references/design.md](references/design.md). An edit — in the rule first, then on
    the screens. A value the document lacks but a screen cannot do without — add it to
