@@ -9,7 +9,7 @@ import { Avatar, Row, Section } from "./ui";
 export const People: FC = () => {
   const db = useWorld((s) => s.db);
   const token = useSession((s) => s.token);
-  const setToken = useSession((s) => s.setToken);
+  const switchTo = useSession((s) => s.switchTo);
   const me = accountOf(token);
 
   return (
@@ -19,7 +19,7 @@ export const People: FC = () => {
           <Row
             key={p.id}
             active={p.id === me}
-            onClick={() => setToken(tokenFor(p.id))}
+            onClick={() => switchTo(tokenFor(p.id))}
           >
             <Avatar name={p.name} />
             <span className="min-w-0 flex-1">
@@ -31,7 +31,7 @@ export const People: FC = () => {
             {p.id === me && <Check className="size-4 text-primary" />}
           </Row>
         ))}
-        <Row active={!me} onClick={() => setToken(null)}>
+        <Row active={!me} onClick={() => switchTo(null)}>
           <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
             <UserX className="size-4" />
           </span>

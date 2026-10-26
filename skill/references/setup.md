@@ -63,6 +63,8 @@ Keep the kit: `src/kit`, `src/ui`, `src/lib/cn.ts`, `src/main.tsx`, `src/index.c
   shared pieces; `src/routes/` — one file per route:
   `createFileRoute("/path")({ component, head: () => ({ meta: [{ title }] }) })`.
 - `src/screens/NotFound.tsx` — the 404 in the product's voice: `__root.tsx` imports it.
+- `index.html` — the product's: its name in `<title>` (the routes set their own titles
+  over it).
 - `tests/journeys.spec.ts` — the paths (see `references/design.md`).
 
 ## 5. Generate and check
@@ -73,6 +75,24 @@ npm run test:e2e     # builds, serves, runs the panel checks and the paths
 ```
 
 Done when both exit 0.
+
+## Migrating an existing prototype
+
+A prototype built on an older base (LiteFront, the former `litefront-prototype` skill)
+moves screen by screen, not rewritten: its world, rules, resolvers, schema, operations,
+screens and paths were already accepted.
+
+1. Note the links before the move: `git show HEAD:docc.lock > /tmp/docc.lock.before`.
+2. Move the old `prototype/` out of the repository (keep it to read), set up the kit by
+   steps 1–3, carry the product code into `src/spec`, `src/screens`, `src/components`,
+   `src/routes`, `src/graphql`, `tests/journeys.spec.ts`; drop what the kit now owns —
+   the panel, service pages, the theme switch, comments, SSR settings, message files.
+3. Files the kit's `.gitignore` ignores but git still tracks (`src/generated/*` and the
+   like): `git rm --cached` them.
+4. A moved file is a new link to docc: `npm run docs` records it **without** a DOC402.
+   For each moved file compare its links' fingerprints in `docc.lock` with the old
+   path's in `/tmp/docc.lock.before`: a different fingerprint means the code changed on
+   the way — read both sides as for DOC402.
 
 ## Pitfalls
 
@@ -88,7 +108,9 @@ Done when both exit 0.
 - **`docc compile` and `docc build` exit 1 while warnings stand**, yet print their
   output; `scripts/proto-docc.mjs` accounts for it.
 - **`npm run lint:fix` before `docc ack`** — formatting changes regions.
-- **State of a tab** (a lock screen, a recent password re-entry) lives in React state
-  or in a store reset on `useSession.subscribe`: the kit remounts the screens when the
-  person in «People» changes, but module-level stores survive.
+- **Two ways to change the token.** The product's sign-in and sign-out use
+  `useSession.setToken`: screens keep their state, so a flow can sign in and go on.
+  The panel's «People» uses `switchTo`: another person, so the kit remounts the screens.
+  State of a tab (a lock screen, a recent password re-entry) lives in React state or in
+  a store reset on `useSession.subscribe` — module-level stores survive a remount.
 - **A new shadcn primitive:** `npx shadcn@latest add <name>`, then `npm run check`.

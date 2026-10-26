@@ -30,6 +30,8 @@ them; never re-create them. A missing one: `npx shadcn@latest add <name>`, then
 | `card` | the container of applied content: `Card` › `CardHeader` (`CardTitle`, `CardDescription`) › `CardContent` › `CardFooter` |
 | `field`, `label`, `input`, `textarea` | a form row: `Field` › `FieldLabel htmlFor` + control `id` + `FieldDescription` or `FieldError`; `data-invalid` on `Field`, `aria-invalid` on the control |
 | `dropdown-menu` | every pop-up menu |
+| `dialog` | a modal question or form over the screen: confirm, re-enter the password |
+| `native-select` | a short choice in a form (the browser's own select, styled) |
 | `tooltip` | a hint on hover/focus instead of `title=` |
 | `alert` | a message next to what failed or needs attention |
 | `avatar` | initials or a picture |

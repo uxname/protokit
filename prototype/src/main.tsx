@@ -17,6 +17,9 @@ const router = createRouter({
   scrollRestoration: true,
 });
 
+// Tests wait on it: a hash change returns before the new screen is drawn.
+Object.assign(window, { protoRouter: router });
+
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;

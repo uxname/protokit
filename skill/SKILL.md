@@ -97,7 +97,9 @@ other. `<skill>` below is this skill's folder.
   request, an operator's action) is a world event `EVENTS`: a button in «World» or in
   a letter.
 - **Time, network, mail come from the world.** Time — `now()` in rules and resolvers,
-  `useNow()` on screens, never `Date.now()`. Network — `useWorld((s) => s.online)`,
+  `useNow()` on screens, never `Date.now()`: everything the product shows or decides by
+  time follows the panel's clock (a countdown included). Pure UI timing — a throttle,
+  an animation — uses `performance.now()`. Network — `useWorld((s) => s.online)`,
   not `navigator.onLine`. Mail — `ctx.send(...)` in a resolver or an event.
 - **A rule lives in a region.** One region, one rule; regions do not nest; targets
   separated by commas. Screens take numbers and texts from the rules.

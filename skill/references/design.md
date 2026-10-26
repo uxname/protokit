@@ -60,7 +60,9 @@ path takes the product without the panel: 390×844 and 1280×800, light and dark
 reset, a toast shown), otherwise the themes are shot in different states. Minimum: the
 first screen, every screen of the main tasks, every error and empty state on the
 paths, offline, and one loading state: `slowServer(page, 10_000)`, act, `shot`,
-`slowServer(page, null)`.
+`slowServer(page, null)`. A state no path can reach (an error the world never
+produces) is not invented for the shot: it goes to the critic's "Accepted decisions"
+with the reason, and the code for it stays.
 
 ## 5. The critic
 

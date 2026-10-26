@@ -9,8 +9,33 @@ import { t } from "../src/kit/i18n";
  * names come from the panel's own dictionary, so the helpers work in either language.
  */
 
-/** Opens a screen of the product: the prototype routes by hash, so "/chat/1" is "/#/chat/1". */
-export const go = (page: Page, path: string) => page.goto(`/#${path}`);
+/**
+ * Opens a screen of the product: the prototype routes by hash, so "/chat/1" is "/#/chat/1".
+ * Returns once the router has drawn it: a hash change alone returns before that.
+ */
+export const go = async (page: Page, path: string) => {
+  await page.goto(`/#${path}`);
+  // Drawn: the router has caught up with the address bar (after any redirect) and rests.
+  await page.waitForFunction(() => {
+    const router = (
+      window as {
+        protoRouter?: {
+          state: {
+            status: string;
+            location: { href: string };
+            resolvedLocation?: { href: string };
+          };
+        };
+      }
+    ).protoRouter;
+    const here = window.location.hash.slice(1) || "/";
+    return (
+      router?.state.status === "idle" &&
+      router.state.location.href === here &&
+      router.state.resolvedLocation?.href === here
+    );
+  });
+};
 
 export const panelDialog = (page: Page) =>
   page.getByRole("dialog", { name: t.panel });

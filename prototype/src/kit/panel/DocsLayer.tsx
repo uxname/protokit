@@ -125,13 +125,15 @@ export const DocsLayer: FC = () => {
   const shown = pinned ?? hover;
   const box = shown?.el.getBoundingClientRect();
   // Under the element if the card fits, else above it, else as low as the screen allows.
+  // The mode's own bar holds the bottom 60 px: the card stays above it.
+  const floor = window.innerHeight - 60;
   const top = !box
     ? 0
-    : box.bottom + 8 + cardH <= window.innerHeight - 8
+    : box.bottom + 8 + cardH <= floor
       ? box.bottom + 8
       : box.top - 8 - cardH >= 8
         ? box.top - 8 - cardH
-        : Math.max(8, window.innerHeight - cardH - 8);
+        : Math.max(8, floor - cardH);
 
   return (
     <>
@@ -157,7 +159,7 @@ export const DocsLayer: FC = () => {
           data-testid="docs-card"
           role="dialog"
           aria-label={t.docsMode}
-          className="fixed z-[90] max-h-[calc(100dvh-1rem)] w-[min(320px,calc(100vw-1rem))] space-y-3 overflow-y-auto rounded-xl border bg-popover p-4 text-sm text-popover-foreground shadow-2xl"
+          className="fixed z-[90] max-h-[calc(100dvh-68px)] w-[min(320px,calc(100vw-1rem))] space-y-3 overflow-y-auto rounded-xl border bg-popover p-4 text-sm text-popover-foreground shadow-2xl"
           style={{
             left: Math.max(
               8,

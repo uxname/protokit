@@ -32,10 +32,12 @@ const createClient = (token: string | null) =>
  * The root of every prototype: the product (the routes) with the GraphQL client of this
  * tab, the toaster and the panel. A new client on every change of the world makes every
  * query refetch (not while offline: then the loaded data stays on screen). Another person
- * in «People» remounts the screens, so nothing of the previous person's screen survives.
+ * in «People» remounts the screens, so nothing of the previous person's screen survives;
+ * the product's own sign-in keeps them, so a flow can sign in and carry on.
  */
 export const ProtoApp: FC = () => {
   const token = useSession((s) => s.token);
+  const person = useSession((s) => s.person);
   const db = useSyncedDb();
   const theme = useTheme((s) => s.theme);
   // biome-ignore lint/correctness/useExhaustiveDependencies: db is the refetch trigger
@@ -45,7 +47,7 @@ export const ProtoApp: FC = () => {
     <Provider value={client}>
       <TooltipProvider>
         <HeadContent />
-        <Fragment key={token ?? ""}>
+        <Fragment key={person}>
           <Outlet />
         </Fragment>
         <Toaster closeButton theme={resolveTheme(theme)} />
