@@ -1,0 +1,13 @@
+overwrite: true
+# The schema of the simulated server (src/kit/mock-fetch.ts runs it in the browser).
+schema: ./schema.graphql
+documents: "./src/graphql/**/*.graphql"
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - "typescript-operations"
+      - "typed-document-node"
+    config:
+      skipTypename: false
+      useTypeImports: true
+      documentNodeImport: "urql#TypedDocumentNode"

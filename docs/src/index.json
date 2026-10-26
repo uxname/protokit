@@ -1,0 +1,7 @@
+{
+  "title": "Family chat",
+  "kind": "page",
+  "body": [
+    "A chat for a family: [[auth]], [[chat]]."
+  ]
+}
