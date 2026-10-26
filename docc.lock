@@ -27,5 +27,5 @@ prototype/src/spec/resolvers.ts chat#^send 8b3becdb 98dfebfe
 prototype/src/spec/rules.ts auth#^password-hash 5110e162 29ce1c7d
 prototype/src/spec/rules.ts auth#^sign-up 80c6ff06 6cfb8eca
 prototype/src/spec/rules.ts auth#^wrong-password cebe0f24 884b235b
-prototype/src/spec/rules.ts chat#^offline 88cdb0dc 1ad093d6
+prototype/src/spec/rules.ts chat#^offline 88cdb0dc fe397ebf
 prototype/src/spec/rules.ts chat#^time 97f32a58 8cc5c072

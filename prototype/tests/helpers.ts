@@ -144,15 +144,35 @@ const SIZES = [
 
 /**
  * Four screenshots of the product (panel hidden) for the design review: phone and desktop,
- * light and dark. After a resize the scroll lands anywhere, so the frame returns to the top or
- * to where the person works (the focused element). Transitions are off, or a theme switch
- * is caught halfway. (No full-page shots: they smear fixed headers and bottom bars.)
+ * light and dark. First every opening or closing (a menu, a dialog, a toast) runs to its
+ * end, then motion is switched off, so nothing is caught halfway. After each resize the
+ * frame follows what the person works with: the focused element, else what sat in the
+ * middle of the screen, else the top. (No full-page shots: they smear fixed bars.)
  */
 export const shot = async (page: Page, name: string) => {
   const size = page.viewportSize();
   // The pointer would leave a hover state on whatever it last touched.
   await page.mouse.move(0, 0);
-  const atTop = await page.evaluate(() => window.scrollY === 0);
+  await page.evaluate(() =>
+    Promise.race([
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+          .map((a) => a.finished.catch(() => undefined)),
+      ),
+      new Promise((done) => setTimeout(done, 2000)),
+    ]),
+  );
+  await page.evaluate(() => {
+    const focus = document.activeElement;
+    (window as { protoShotAnchor?: Element | null }).protoShotAnchor =
+      focus && focus !== document.body
+        ? focus
+        : window.scrollY === 0
+          ? null
+          : document.elementFromPoint(innerWidth / 2, innerHeight / 2);
+  });
   const hide = await page.addStyleTag({
     content:
       "[data-proto-panel]{display:none!important}*,*::before,*::after{transition:none!important;animation:none!important}",
@@ -163,11 +183,15 @@ export const shot = async (page: Page, name: string) => {
     }, scheme);
     for (const s of SIZES) {
       await page.setViewportSize({ width: s.width, height: s.height });
-      await page.evaluate((top) => {
-        const el = document.activeElement;
-        if (top || !el || el === document.body) window.scrollTo(0, 0);
-        else el.scrollIntoView({ block: "center" });
-      }, atTop);
+      await page.evaluate(() => {
+        const anchor = (window as { protoShotAnchor?: Element | null })
+          .protoShotAnchor;
+        if (!anchor?.isConnected) return window.scrollTo(0, 0);
+        const r = anchor.getBoundingClientRect();
+        // Already in view: the frame stays as the person sees it.
+        if (r.top >= 0 && r.bottom <= innerHeight) return;
+        anchor.scrollIntoView({ block: "center" });
+      });
       await page.waitForTimeout(150);
       await page.screenshot({
         path: `screens/${name}--${s.name}-${scheme}.png`,

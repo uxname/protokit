@@ -45,7 +45,7 @@ Keep the kit: `src/kit`, `src/ui`, `src/lib/cn.ts`, `src/main.tsx`, `src/index.c
 | `model.ts` | `Db` — everything the server holds; `Ctx = ProtoCtx<Db>` (`import type` from `@/kit`) |
 | `world.ts` | `seed(): Db` — the starting world; `people(db): Person[]` — whom «People» lists (`note`: email, password, whatever the person holds — a line per item); `EVENTS: Record<id, ProtoEvent<Db>>` — world events |
 | `resolvers.ts` | `resolvers` — root fields of `Query` and `Mutation`; sign-in returns `ctx.tokenFor(id)` |
-| `rules.ts` | the documents' rules; among them `OFFLINE_READS: boolean` — `true` if the documents promise reading offline (the app keeps a local copy), `false` — offline only what is loaded stays |
+| `rules.ts` | the documents' rules; among them `OFFLINE_READS` — which reads answer offline: `true` all (the documents promise reading offline: the app keeps a local copy), `false` none (only what is loaded stays), or `(operation) => boolean` when some reads need the server (checking an invitation code, say) |
 | `not-shown.ts` | `NOT_SHOWN: { to, why }[]` with tags above the list |
 | `docs.ts` | `DOCS_TARGET.docspace` — `{ url, projectId }` or `null` (links open `docs.html`) |
 | `index.ts` | re-exports all of it |

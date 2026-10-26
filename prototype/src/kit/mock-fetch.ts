@@ -28,7 +28,12 @@ export const protoFetch: typeof fetch = async (_input, init) => {
   await new Promise((r) => setTimeout(r, latency()));
   const { query, variables, operationName } = JSON.parse(String(init?.body));
   const read = /^\s*(query\b|\{)/.test(query);
-  if (!useWorld.getState().online && !(OFFLINE_READS && read))
+  const offlineOk =
+    read &&
+    (typeof OFFLINE_READS === "function"
+      ? OFFLINE_READS(operationName ?? "")
+      : OFFLINE_READS);
+  if (!useWorld.getState().online && !offlineOk)
     throw new TypeError("Failed to fetch");
   const result = await graphql({
     schema,

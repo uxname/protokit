@@ -13,7 +13,7 @@ import { t } from "./i18n";
 import { protoFetch } from "./mock-fetch";
 import { ProtoPanel } from "./panel/ProtoPanel";
 import { useSession } from "./session";
-import { resolveTheme, useTheme } from "./theme";
+import { usePaintedTheme } from "./theme";
 import { useSyncedDb } from "./world";
 
 /** A urql client that talks to the simulated server with this tab's token. */
@@ -39,7 +39,7 @@ export const ProtoApp: FC = () => {
   const token = useSession((s) => s.token);
   const person = useSession((s) => s.person);
   const db = useSyncedDb();
-  const theme = useTheme((s) => s.theme);
+  const theme = usePaintedTheme();
   // biome-ignore lint/correctness/useExhaustiveDependencies: db is the refetch trigger
   const client = useMemo(() => createClient(token), [token, db]);
 
@@ -50,7 +50,7 @@ export const ProtoApp: FC = () => {
         <Fragment key={person}>
           <Outlet />
         </Fragment>
-        <Toaster closeButton theme={resolveTheme(theme)} />
+        <Toaster closeButton theme={theme} />
         <ProtoPanel />
       </TooltipProvider>
     </Provider>

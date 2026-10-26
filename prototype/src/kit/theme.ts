@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -35,6 +36,24 @@ export const useTheme = create<{
     },
   ),
 );
+
+/**
+ * The theme painted on <html> right now, whoever set it — the panel, the OS, or a
+ * screenshot switching themes. Parts that take a theme as a prop (the toaster) follow it.
+ */
+export const usePaintedTheme = (): "light" | "dark" =>
+  useSyncExternalStore(
+    (onChange) => {
+      const observer = new MutationObserver(onChange);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+      return () => observer.disconnect();
+    },
+    () =>
+      document.documentElement.dataset.theme === "dark" ? "dark" : "light",
+  );
 
 paint(useTheme.getState().theme);
 matchMedia(DARK).addEventListener("change", () =>

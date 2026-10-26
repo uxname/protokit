@@ -39,6 +39,10 @@ export const timeLabel = (at: number, current = now()): string => {
 
 // docc:begin chat#^offline
 export const OFFLINE_COMPOSER = "You're offline — messages can't be sent yet.";
-/** Without network the app shows only what it already loaded: the server answers nothing. */
-export const OFFLINE_READS = false;
+/**
+ * Which reads answer offline: `true` all (the app keeps a copy on the device), `false`
+ * none (only what is loaded stays), or a function of the operation name for a mix.
+ * Here: none — the server answers nothing.
+ */
+export const OFFLINE_READS: boolean | ((operation: string) => boolean) = false;
 // docc:end
