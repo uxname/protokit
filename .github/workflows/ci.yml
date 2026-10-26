@@ -31,7 +31,15 @@ jobs:
           node skill/scripts/check-sync.test.mjs
       - run: npm ci
       - run: npm run check
-      - run: npx playwright install --with-deps chromium
+      # The browser is cached by Playwright's version; ubuntu-latest already has its system
+      # libraries, so no apt step (that step alone took over ten minutes).
+      - id: pw
+        run: echo "version=$(node -p 'require("@playwright/test/package.json").version')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.pw.outputs.version }}
+      - run: npx playwright install chromium
       - run: npm run test:e2e
       - name: Screenshots
         if: always()

@@ -1,7 +1,13 @@
 // docc: chat#^send, chat#^time, chat#^offline
 
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, CircleAlert, SendHorizontal, WifiOff } from "lucide-react";
+import {
+  ArrowLeft,
+  CircleAlert,
+  SearchX,
+  SendHorizontal,
+  WifiOff,
+} from "lucide-react";
 import { type FC, type FormEvent, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { AppShell } from "@/components/AppShell";
@@ -56,6 +62,7 @@ const Thread: FC<{ id: string }> = ({ id }) => {
   if (data && !data.person) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+        <SearchX className="size-10 text-muted-foreground" aria-hidden="true" />
         <p className="font-medium">Conversation not found</p>
         <p className="text-sm text-muted-foreground">
           The link may be out of date.

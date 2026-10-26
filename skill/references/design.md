@@ -64,13 +64,21 @@ paths, offline, and one loading state: `slowServer(page, 10_000)`, act, `shot`,
 produces) is not invented for the shot: it goes to the critic's "Accepted decisions"
 with the reason, and the code for it stays.
 
+**The state table.** Before the critic, write `tests/states.md` (committed next to the paths): one row per list or
+request on each screen, one column per state that applies to it — loading, empty,
+error, offline, in progress, done — and in each cell the screenshot that shows it, or
+"unreachable: <why>". An empty cell is a missing shot: add it to a path. The table goes
+to the critic with the screenshots, so a missing state is a fact on paper, not
+something the critic has to notice.
+
 ## 5. The critic
 
 Visual readiness is accepted by someone who did not build it. Start a separate agent
 (the agent tool; none — walk the list yourself and say so in the report) with:
 
 > You are a strict product designer. In front of you: the prototype's screenshots
-> `<path>/prototype/screens/*.png` (phone and desktop, light and dark),
+> `<path>/prototype/screens/*.png` (phone and desktop, light and dark), the state table
+> `<path>/prototype/tests/states.md`,
 > the rules `<path>/prototype/DESIGN.md` and the requirement documents
 > `<path>/docs/src` — what the product must do. Open every screenshot. Accept or reject
 > the look as a finished product. A blocker is what tells a person it is a mockup or
@@ -82,7 +90,8 @@ Visual readiness is accepted by someone who did not build it. Start a separate a
 > documents. The kit's design tokens (`src/index.css`) are not a blocker. Built-in
 > browser controls (the date field's placeholder) speak the headless browser's
 > language: not a blocker. Accepted decisions are not blockers: <decisions from earlier
-> rounds with reasons>. Return blockers (screenshot, what is wrong, how to fix), minor
+> rounds with reasons>. Check the state table against the screenshots: a state marked as
+> shown but not on its screenshot, or a cell left empty, is a blocker. Return blockers (screenshot, what is wrong, how to fix), minor
 > notes and questions to the documents. Change nothing.
 
 Fix the blockers, shoot again and hand the new screenshots to **the same** critic

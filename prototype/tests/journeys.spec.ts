@@ -189,6 +189,7 @@ test("a wrong address leads back to the conversations", async ({ page }) => {
   await go(page, "/chat/nobody");
   await expect(page.getByText("Conversation not found")).toBeVisible();
   await expect(page.getByLabel("Message")).toHaveCount(0);
+  await shot(page, "08a-conversation-not-found");
   await go(page, "/no-such-page");
   await expect(
     page.getByRole("heading", { name: "This page doesn't exist" }),

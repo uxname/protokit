@@ -14,7 +14,7 @@
     "predev": "npm run docs && npm run gen",
     "prebuild": "npm run docs && npm run gen",
     "precheck": "npm run docs && npm run gen && npm run routes",
-    "check": "biome check && tsc --noEmit",
+    "check": "node scripts/check-sources.mjs && biome check && tsc --noEmit",
     "lint:fix": "biome check --write",
     "test:e2e": "playwright test",
     "pretest:e2e": "npm run docs && npm run gen",

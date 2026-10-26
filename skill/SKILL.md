@@ -126,6 +126,8 @@ product.** Visual quality is half of the prototype's value, not a finish.
 - Screenshots: every meaningful step of a path calls `shot(page, "<nn>-<screen>")` —
   390×844 and 1280×800, light and dark. At least: the first screen, every screen of
   the main tasks, every error and empty state on the paths, one loading state, offline.
+- State table: `tests/states.md` maps every list and request of every screen to the shot of
+  each of its states, or says why a state is unreachable.
 - **Critic.** Visual readiness is accepted by someone who did not build it: a separate
   agent by [references/design.md](references/design.md). Done at 0 blockers. A small
   visual edit also goes through screenshots.
