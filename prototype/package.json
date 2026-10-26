@@ -13,11 +13,12 @@
     "docs": "node scripts/proto-docs.mjs",
     "predev": "npm run docs && npm run gen",
     "prebuild": "npm run docs && npm run gen",
-    "precheck": "npm run docs && npm run gen",
+    "precheck": "npm run docs && npm run gen && npm run routes",
     "check": "biome check && tsc --noEmit",
     "lint:fix": "biome check --write",
     "test:e2e": "playwright test",
-    "pretest:e2e": "npm run docs && npm run gen"
+    "pretest:e2e": "npm run docs && npm run gen",
+    "routes": "tsr generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -44,6 +45,7 @@
     "@graphql-codegen/typescript-operations": "^6.1.10",
     "@playwright/test": "^1.64.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/router-cli": "^1.167.46",
     "@tanstack/router-plugin": "^1.168.48",
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
