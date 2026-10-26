@@ -8,6 +8,10 @@ This repository is the kit itself: the demo prototype "Family chat" (`docs/`,
 - The kit (`prototype/src/kit`, `src/ui`, `scripts/`, `tests/helpers.ts`,
   `tests/smoke.spec.ts`) is shared by every prototype made from this repository: a change
   there must keep working for a project in another language and with other screens.
+- The demo alone does not prove a kit change: the demo's `src/spec` is one set of values.
+  Before pushing, copy the changed kit files into a prototype made from the kit with other
+  values (another `lang`, `OFFLINE_READS`, screens) and run its `npm run check` and
+  `npm run test:e2e` too.
 - The skill and the kit change together: a new kit feature is described in the skill in
   the same commit.
 - Before a commit, all green: `docc check --max-warnings 0`,
