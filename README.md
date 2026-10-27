@@ -21,9 +21,12 @@ two browser tabs can be two different people talking to each other.
   - **Docs** — the requirements behind this screen, what no screen shows, and
     **documentation mode**: hover any element to read the paragraph it implements and jump
     to it.
-- **Synced with the documents** through [docc](https://github.com/uxname/docc): code is
-  tagged with the paragraphs it implements, so editing a paragraph flags the code and
-  editing the code flags the paragraph.
+- **Synced with the documents** through [docc](https://github.com/uxname/docc), strictly:
+  every paragraph has a permanent code (`K7F2`), every file of rules and screens names
+  the paragraphs it implements together with the version of each it was checked against,
+  and carries the print of its own code. Edit a paragraph — the code that depends on it
+  stops passing the check; edit the code — so do its paragraphs; the commit waits until
+  an agent has read both sides and updated each link by hand.
 - **Design held to a bar**: shadcn/ui, light and dark themes, phone and desktop, every
   loading, empty, error and offline state — and screenshots of every path for review.
 - **Static output.** `npm run build` gives a folder you can put on any static host and
@@ -71,6 +74,17 @@ Then follow [`skill/references/setup.md`](skill/references/setup.md): remove the
 describe your server in `src/spec` and `schema.graphql`, write screens in `src/screens`,
 paths in `tests/journeys.spec.ts`. The screen rules are in
 [`prototype/DESIGN.md`](prototype/DESIGN.md).
+
+## The idea: agents keep the links, people read
+
+The documents and the prototype are written by AI agents; people read them, point at a
+paragraph by its code and comment. Nobody should have to remember which screen follows
+which paragraph — the agents carry that routine, and the compiler (docc) makes a missed
+link impossible to commit: every link holds the hash of the version it was checked
+against, every file the print of its code, and there is no command that confirms them
+in bulk — an agent rewrites each one in its place, after reading the change. An edit of
+the prototype forces the documents to be checked, an edit of the documents forces the
+prototype.
 
 ## How it is built
 

@@ -1,4 +1,4 @@
-// docc: auth#^sign-up
+// docc: auth#^dnrs@z38x ~46kx
 
 import { Link, Navigate, useNavigate } from "@tanstack/react-router";
 import { MessagesSquare } from "lucide-react";
@@ -92,7 +92,7 @@ export const SignUp: FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Req to="auth#^sign-up">
+              <Req to="auth#^dnrs">
                 <form onSubmit={submitForm} noValidate>
                   <FieldGroup>
                     <Field>

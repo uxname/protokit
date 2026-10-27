@@ -1,3 +1,4 @@
+// docc-none: the page for a wrong address, which every product has; the documents do not describe it
 import { Link } from "@tanstack/react-router";
 import { SearchX } from "lucide-react";
 import type { FC } from "react";

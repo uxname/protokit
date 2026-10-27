@@ -1,4 +1,4 @@
-// docc: chat#^dialogs, chat#^time
+// docc: chat#^rbtf@j5xa, chat#^yy76@j34n ~ynv4
 
 import { Link } from "@tanstack/react-router";
 import { CircleAlert } from "lucide-react";
@@ -57,7 +57,7 @@ export const DialogList: FC<{ activeId?: string }> = ({ activeId }) => {
   }
 
   return (
-    <Req to="chat#^dialogs">
+    <Req to="chat#^rbtf">
       <nav aria-label="Conversations" className="p-2">
         {data?.dialogs.length === 0 && (
           <p className="px-2 py-6 text-center text-sm text-muted-foreground">

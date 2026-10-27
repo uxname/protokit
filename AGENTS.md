@@ -3,6 +3,9 @@
 This repository is the kit itself: the demo prototype "Family chat" (`docs/`,
 `prototype/`) and the agent skill (`skill/`).
 
+- People only read the documents and the prototype; agents keep every link between them,
+  and docc makes a missed one impossible to commit (see "The idea" in README.md). A kit
+  or skill change keeps it so: no path that confirms links without reading them.
 - Building or changing a prototype follows [skill/SKILL.md](skill/SKILL.md) — the demo is
   a prototype like any other.
 - The kit (`prototype/src/kit`, `src/ui`, `scripts/`, `tests/helpers.ts`,

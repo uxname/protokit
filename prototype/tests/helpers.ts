@@ -119,9 +119,9 @@ export const expectReqs = async (page: Page) => {
     .locator("[data-req]")
     .evaluateAll((els) => els.map((e) => e.getAttribute("data-req") ?? ""));
   for (const target of targets) {
-    const [doc, anchor = ""] = target.split("#^");
+    const [doc, code = ""] = target.split("#^");
     expect(
-      pages[doc]?.anchors[anchor],
+      pages[doc]?.anchors[code.toLowerCase()],
       `<Req to="${target}">: no such paragraph`,
     ).toBeTruthy();
   }

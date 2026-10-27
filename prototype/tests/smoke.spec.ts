@@ -14,7 +14,7 @@ import { actAs, docsMode, expectReqs, go, panel, panelDialog } from "./helpers";
 
 const pages: Record<
   string,
-  { title: string; anchors: Record<string, { text: string }> }
+  { title: string; anchors: Record<string, { text: string; hash: string }> }
 > = index.pages;
 
 test("a stranger opens the prototype", async ({ page }) => {
@@ -43,15 +43,21 @@ for (const person of people(seed())) {
   });
 }
 
-test("every anchor exists in docs.html", async ({ page }) => {
-  const ids = Object.entries(pages).flatMap(([id, p]) =>
-    Object.keys(p.anchors).map((a) => `${id}--${a}`),
+test("every block code opens its block in docs.html", async ({ page }) => {
+  const links = Object.entries(pages).flatMap(([id, p]) =>
+    Object.entries(p.anchors).map(([code, a]) => ({
+      code,
+      hash: `${id}--${code}@${a.hash}`,
+    })),
   );
-  expect(ids.length).toBeGreaterThan(0);
-  // docs.html draws its pages with a script, so the anchors exist only after it runs.
-  for (const id of ids) {
-    await page.goto(`/docs.html#${id}`);
-    await expect(page.locator(`[id="${id}"]`), id).toBeAttached();
+  expect(links.length).toBeGreaterThan(0);
+  // docs.html draws its pages with a script, so the blocks exist only after it runs.
+  for (const { code, hash } of links) {
+    await page.goto(`/docs.html#${hash}`);
+    await expect(
+      page.locator(".code", { hasText: code.toUpperCase() }),
+      hash,
+    ).toBeAttached();
   }
 });
 
@@ -76,8 +82,11 @@ test("documentation mode shows the paragraph behind an element", async ({
   });
   expect(target, "a screen with a <Req> element").not.toBeNull();
   if (!target) return;
-  const [doc, anchor] = target.to.split("#^");
-  const paragraph = pages[doc].anchors[anchor].text.replace(/\*\*/g, "");
+  const [doc, code] = target.to.split("#^");
+  const paragraph = pages[doc].anchors[code.toLowerCase()].text.replace(
+    /\*\*/g,
+    "",
+  );
   const url = page.url();
 
   await docsMode(page, true);
@@ -86,7 +95,11 @@ test("documentation mode shows the paragraph behind an element", async ({
   await expect(card).toContainText(paragraph.slice(0, 40));
   await expect(
     card.getByRole("link", { name: t.openInDocs }).first(),
-  ).toHaveAttribute("href", new RegExp(`${doc}--${anchor}$`));
+  ).toHaveAttribute(
+    "href",
+    new RegExp(`${doc}--${code.toLowerCase()}@[a-z0-9]{4}$`),
+  );
+  await expect(card).toContainText(code.toUpperCase());
   // A click pins the card and does not act on the product.
   await page.mouse.click(target.x, target.y);
   expect(page.url()).toBe(url);

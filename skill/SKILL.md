@@ -42,14 +42,23 @@ Words this skill thinks in:
 - **Rule** — a number, condition, text or type from the documents in code, inside a
   **region** `// docc:begin <targets>` … `// docc:end`. docc notices edits of a region
   (DOC402).
-- **Tag** — `// docc: <id>#^<anchor>` in a file: the file implements the paragraph.
-  docc carries a change of the paragraph to the file (DOC209).
-- **Req** — `<Req to="<id>#^<anchor>">element</Req>` around what shows a paragraph.
+- **Code** — the permanent name of a block of the documents, ` ^k7f2` at its end, given
+  by `docc build`. Agents never write, change or move codes; people read them upper case
+  (`K7F2`) in the readers and the panel and use them to point at a paragraph.
+- **Tag** — `// docc: <id>#^<code>@<hash>, … ~<print>` on the first line of a file: the
+  file implements those paragraphs. The hash is the version of the paragraph the file was
+  checked against, the print the version of the file itself. A change of either side
+  fails `docc check` (DOC209, DOC402) until the agent has read it and written the new
+  hash by hand, in that place.
+- **Req** — `<Req to="<id>#^<code>">element</Req>` around what shows a paragraph.
   Invisible in the product; documentation mode reads it. A `Req` around the whole
   screen links the screen. The file with a `Req` carries the tag of the same target.
 
 The prototype and the documents are **equal**: an edit on either side reaches the
-other. `<skill>` below is this skill's folder.
+other. People only read both; the links between them are the agent's routine, and docc
+makes a missed one impossible to commit — so never look for a way around a stale hash
+or print: read the change, bring the other side in line, write the new value by hand.
+`<skill>` below is this skill's folder.
 
 ## Every run
 
@@ -63,7 +72,7 @@ other. `<skill>` below is this skill's folder.
    `npm run check` in `prototype/` exits 0.
 4. **Sync before work.** From the root: `docc validate --format json --max-diagnostics 0`
    and `node <skill>/scripts/check-sync.mjs`. Work through every DOC209, DOC402,
-   DOC401 and uncovered anchor by [references/sync.md](references/sync.md). Readers'
+   DOC401, uncovered block and untagged file by [references/sync.md](references/sync.md). Readers'
    comments on the documents (`docc comments --format json`, or Docspace) are requests:
    name the open ones in the report; one the user agrees to changes the paragraph, and
    the prototype follows it as any DOC209.
@@ -71,8 +80,8 @@ other. `<skill>` below is this skill's folder.
    [references/design.md](references/design.md). An edit — in the rule first, then on
    the screens. A value the document lacks but a screen cannot do without — add it to
    the paragraph yourself: the sides are equal.
-6. **Sync after work.** `npm run lint:fix` in `prototype/` **before** `docc ack`
-   (formatting changes regions), then step 4 again. DOC402 on code written in this
+6. **Sync after work.** `npm run lint:fix` in `prototype/` **before** writing prints
+   (formatting changes the code), then step 4 again. DOC402 on code written in this
    same run is expected — see [references/sync.md](references/sync.md).
 7. **Checks.** All green, the output of each one read:
    - `docc check --max-warnings 0` (root);
@@ -108,12 +117,14 @@ other. `<skill>` below is this skill's folder.
   not `navigator.onLine`. Mail — `ctx.send(...)` in a resolver or an event.
 - **A rule lives in a region.** One region, one rule; regions do not nest; targets
   separated by commas. Screens take numbers and texts from the rules.
-- **A screen carries tags and Req.** The first line of a screen file is
-  `// docc: <targets>`; an element showing a paragraph is wrapped in `<Req to="…">`
+- **Every rule and screen file carries a tag.** The first line of each file of
+  `src/spec` and `src/screens` is `// docc: <targets>`; a file with nothing of the
+  documents (an index, the seed data, a wrong-address page) says why on
+  `// docc-none: <reason>`. In a screen an element showing a paragraph is wrapped in `<Req to="…">`
   with a literal `to`. The only child of `Req` passes props to its DOM element (DOM
   tags and shadcn primitives do).
 - **A tag is a `//` line.** docc silently skips `{/* docc: … */}` in JSX.
-- **Every anchor is covered.** A paragraph no screen can show (server internals,
+- **Every requirement block is covered.** A paragraph no screen can show (server internals,
   encryption, an operator's work) is a line in `src/spec/not-shown.ts` with the reason
   and a tag; the panel lists it under «Not on any screen».
 - **The kit stays the kit.** `src/kit`, `src/ui`, `scripts/`, `tests/helpers.ts` and
@@ -148,10 +159,10 @@ product.** Visual quality is half of the prototype's value, not a finish.
 
 Short and plain:
 
-- what changed in the prototype and in the documents, by paragraph (`id#^anchor`);
+- what changed in the prototype and in the documents, by paragraph (`id#^code`);
 - what was added to the documents because the prototype lacked a value;
 - what was decided where both sides changed, and why;
-- the checks with numbers: anchors covered N of N, paths N, screenshots N, critic
+- the checks with numbers: blocks covered N of N, paths N, screenshots N, critic
   blockers 0;
 - how to look: `npm run dev` in `prototype/`, whom to sign in as (from «People») and
   which path to walk.

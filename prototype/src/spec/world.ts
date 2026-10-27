@@ -1,3 +1,4 @@
+// docc-none: the seeded people and their history — a starting state, the rules live in rules.ts
 import type { Person, ProtoEvent } from "@/kit";
 import { now } from "@/kit/clock";
 import type { Db } from "./model";

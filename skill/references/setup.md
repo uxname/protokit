@@ -5,7 +5,7 @@ can check.
 
 ## 1. Tools
 
-- Node.js 22+ and `docc` on `PATH` (`docc --version`). No docc:
+- Node.js 22+ and `docc` 0.5.0+ on `PATH` (`docc --version`; older: `docc update`). No docc:
   `curl -fsSL https://raw.githubusercontent.com/uxname/docc/main/install.sh | sh`
   (Windows: `irm https://raw.githubusercontent.com/uxname/docc/main/install.ps1 | iex`).
 - `docc.json` has `"lang"` — the documents' language. The panel speaks it (`ru`
@@ -103,19 +103,17 @@ A prototype built on an older base (LiteFront, the former `litefront-prototype` 
 moves screen by screen, not rewritten: its world, rules, resolvers, schema, operations,
 screens and paths were already accepted.
 
-1. Note the links before the move: `git show HEAD:docc.lock > /tmp/docc.lock.before`.
-2. Move the old `prototype/` out of the repository (keep it to read), set up the kit by
+1. Move the old `prototype/` out of the repository (keep it to read), set up the kit by
    steps 1–3, carry the product code into `src/spec`, `src/screens`, `src/components`,
    `src/routes`, `src/graphql`, `tests/journeys.spec.ts`; drop what the kit now owns —
    the panel, service pages, the theme switch, comments, SSR settings, message files.
-3. Files the kit's `.gitignore` ignores but git still tracks (`src/generated/*` and the
+2. Files the kit's `.gitignore` ignores but git still tracks (`src/generated/*` and the
    like): `git rm --cached` them.
-4. A moved region keeps its confirmed fingerprints (docc 0.4.6+) when its target lost
-   exactly one region and gained exactly one: a change on the way raises DOC402 — work
-   it through as any. A target with several regions is not paired: its new regions are
-   recorded **without** a DOC402. For those, compare the fingerprints in `docc.lock`
-   with the old paths' in `/tmp/docc.lock.before`: a different one means the code
-   changed on the way — read both sides as for DOC402.
+3. Tags and regions keep their hashes and prints on the way; a print that breaks means
+   the code changed on the way — read both sides as for DOC402.
+4. A project of the old docc format (named anchors, `docc.lock`) is converted first:
+   `docc migrate` from the root — it gives codes, rewrites links, tags and `Req` targets,
+   adds hashes and prints. It is a script, not a review: commit it alone, then go on.
 
 ## Pitfalls
 
@@ -128,9 +126,9 @@ screens and paths were already accepted.
 - **Screenshots live in `screens/`**, not `test-results/`: Playwright empties
   `test-results/` on every run, a partial one included.
 - **A tag in JSX** `{/* docc: … */}` is invisible to docc — `//` lines only.
-- **`docc compile` and `docc build` exit 1 while warnings stand**, yet print their
+- **`docc compile` and `docc build` exit 1 while stale hashes stand**, yet print their
   output; `scripts/proto-docc.mjs` accounts for it.
-- **`npm run lint:fix` before `docc ack`** — formatting changes regions.
+- **`npm run lint:fix` before writing prints** — formatting changes the code.
 - **Two ways to change the token.** The product's sign-in and sign-out use
   `useSession.setToken`: screens keep their state, so a flow can sign in and go on.
   The panel's «People» uses `switchTo`: another person, so the kit remounts the screens.

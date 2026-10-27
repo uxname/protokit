@@ -1,4 +1,4 @@
-// docc: auth#^sign-in, auth#^wrong-password
+// docc: auth#^pjds@fz63, auth#^ayqz@uasp ~6dqc
 
 import { Link, Navigate, useNavigate } from "@tanstack/react-router";
 import { MessagesSquare } from "lucide-react";
@@ -59,7 +59,7 @@ export const SignIn: FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Req to="auth#^sign-in">
+          <Req to="auth#^pjds">
             <form onSubmit={submit} noValidate>
               <FieldGroup>
                 <Field>
@@ -86,7 +86,7 @@ export const SignIn: FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   {error && (
-                    <Req to="auth#^wrong-password">
+                    <Req to="auth#^ayqz">
                       <FieldError id="password-error">{error}</FieldError>
                     </Req>
                   )}

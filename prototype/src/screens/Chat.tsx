@@ -1,4 +1,4 @@
-// docc: chat#^send, chat#^time, chat#^offline
+// docc: chat#^send@9buh, chat#^yy76@j34n, chat#^2ntc@4d38 ~z82w
 
 import { Link } from "@tanstack/react-router";
 import {
@@ -160,7 +160,7 @@ const Thread: FC<{ id: string }> = ({ id }) => {
                     )}
                   >
                     <p className="break-words whitespace-pre-wrap">{m.text}</p>
-                    <Req to="chat#^time">
+                    <Req to="chat#^yy76">
                       <p
                         className={cn(
                           "mt-1 text-right text-[11px]",
@@ -186,7 +186,7 @@ const Thread: FC<{ id: string }> = ({ id }) => {
         className="shrink-0 space-y-2 border-t bg-background px-3 py-3 md:px-6"
       >
         {!online && (
-          <Req to="chat#^offline">
+          <Req to="chat#^2ntc">
             <Alert className="py-2">
               <WifiOff />
               <AlertDescription>{OFFLINE_COMPOSER}</AlertDescription>

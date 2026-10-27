@@ -1,6 +1,6 @@
 # Converting Markdown documentation to docc
 
-Without docc a prototype has no sync: Markdown has no paragraph anchors and notices no
+Without docc a prototype has no sync: Markdown has no paragraph codes and notices no
 edits. The conversion changes the storage format, not the text. Ask first: the documents
 become JSON files in `docs/src`, the original `.md` goes to git history. The docc format
 is the `docc` skill.
@@ -9,7 +9,8 @@ is the `docc` skill.
    `docs/src/index.json`, a pre-commit hook). In `docc.json` set `"lang"` to the text's
    language (`"ru"` for Russian).
 2. **The requirement kind.** `docs/schemas/req.json` with `"x-docc-covered": true` —
-   documents every anchor of which the prototype must cover:
+   documents every block of which the prototype must cover (to cover only some fields of
+   a kind, mark those properties with `"x-docc-covered": true` instead):
 
    ```json
    {
@@ -27,9 +28,8 @@ is the `docc` skill.
    sub-item and a contents page with `[[links]]`. `parent` and `order` follow the
    source's outline.
 4. **A paragraph per item.** A list item or paragraph of the source is one `body` line,
-   word for word (bold and `code` stay Markdown). Each requirement paragraph ends in an
-   anchor ` ^name`: Latin letters, digits, hyphen, starting with a letter, the item's
-   meaning (`^autolock-timer`, `^brute-force`), unique in the document.
+   word for word (bold and `code` stay Markdown), written without a code: `docc build`
+   ends every block in its permanent code ` ^k7f2`.
 5. **A table** is one paragraph, rows separated by `\n`.
 6. `docc validate --format json --max-diagnostics 0`. Words the style rules flag
    (DOC352 "several", DOC353 "new") in verbatim text are terms ("new password",

@@ -1,3 +1,4 @@
+// docc-none: the frame of the conversations screen; its list (components/DialogList) names the paragraphs
 import { MessagesSquare } from "lucide-react";
 import type { FC } from "react";
 import { useQuery } from "urql";

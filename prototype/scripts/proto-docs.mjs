@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Builds what the prototype needs from the project documents (docc):
 //   src/generated/doc-index.json — the documents' language (docc.json `lang`; the panel
-//                                  speaks it) and every page: path, title, kind and the
-//                                  text of its anchored paragraphs;
+//                                  speaks it) and every page: path, title, kind and, by
+//                                  code, the text and version hash of each of its blocks;
 //   public/docs.html             — the HTML build the requirement links open without Docspace.
 // Runs before dev, build and check. Needs `docc` on PATH and docc.json in a parent folder.
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -13,13 +13,17 @@ const root = doccRoot();
 const config = JSON.parse(readFileSync(join(root, "docc.json"), "utf8"));
 const lang = config.lang ?? "en";
 const compiled = JSON.parse(docc(root, ["compile", "--format", "json"]));
-const ANCHOR = /\s\^([a-z][a-z0-9-]*)$/;
+const CODE = /\s\^[a-z0-9]{4}$/;
 const pages = {};
 for (const page of compiled.pages) {
   const anchors = {};
-  for (const block of page.blocks) {
-    const m = typeof block.s === "string" && block.s.match(ANCHOR);
-    if (m) anchors[m[1]] = { text: block.s.slice(0, m.index) };
+  // A short document's fields come as props, a long one's as blocks: both carry codes.
+  for (const block of [...page.blocks, ...(page.props ?? [])]) {
+    if (block.code && typeof block.s === "string")
+      anchors[block.code] = {
+        text: block.s.replace(CODE, ""),
+        hash: block.hash,
+      };
   }
   pages[page.id] = {
     path: page.path,

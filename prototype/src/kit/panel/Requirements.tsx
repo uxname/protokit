@@ -48,6 +48,9 @@ export const Requirements: FC = () => {
                 >
                   {r.title}
                 </a>
+                <span className="float-right font-mono text-xs text-muted-foreground">
+                  {r.code}
+                </span>
                 <p className="mt-1 line-clamp-3 text-muted-foreground">
                   {plain(r.text)}
                 </p>

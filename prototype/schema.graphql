@@ -1,6 +1,6 @@
 # The contract of the simulated server. Resolvers: src/spec/resolvers.ts.
 
-# docc:begin auth#^sign-in, auth#^sign-up
+# docc:begin auth#^pjds@fz63, auth#^dnrs@z38x ~uykb
 type Me {
   id: ID!
   name: String!
@@ -8,7 +8,7 @@ type Me {
 }
 # docc:end
 
-# docc:begin chat#^dialogs, chat#^send, chat#^time
+# docc:begin chat#^rbtf@j5xa, chat#^send@9buh, chat#^yy76@j34n ~4rze
 type Dialog {
   "The other person."
   id: ID!

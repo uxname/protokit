@@ -1,6 +1,6 @@
 import type { ProtoCtx } from "@/kit";
 
-// docc:begin auth#^sign-in, auth#^password-hash
+// docc:begin auth#^pjds@fz63, auth#^jmgu@qaw6 ~ktvw
 export interface Account {
   id: string;
   name: string;
@@ -9,7 +9,7 @@ export interface Account {
 }
 // docc:end
 
-// docc:begin chat#^send, chat#^dialogs
+// docc:begin chat#^send@9buh, chat#^rbtf@j5xa ~huua
 export interface Message {
   id: string;
   from: string;
@@ -20,7 +20,7 @@ export interface Message {
 }
 // docc:end
 
-// docc:begin auth#^sign-up
+// docc:begin auth#^dnrs@z38x ~rndm
 /** A sign-up waiting for the code from the letter. */
 export interface PendingSignUp {
   name: string;

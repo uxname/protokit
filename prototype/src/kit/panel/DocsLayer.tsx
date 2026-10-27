@@ -183,6 +183,9 @@ export const DocsLayer: FC = () => {
                 className={`flex items-center gap-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase ${pinned && i === 0 ? "pr-6" : ""}`}
               >
                 <BookOpen className="size-3.5" /> {r.title}
+                <span className="ml-auto font-mono tracking-normal">
+                  {r.code}
+                </span>
               </p>
               {/* Hovering previews; a pinned card reads in full. */}
               <p

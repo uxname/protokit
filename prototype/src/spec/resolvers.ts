@@ -34,7 +34,7 @@ export const resolvers = {
     return a ? { id: a.id, name: a.name, email: a.email } : null;
   },
 
-  // docc:begin chat#^dialogs
+  // docc:begin chat#^rbtf@j5xa ~egve
   dialogs: (_: Args, ctx: Ctx) => {
     const me = signedIn(ctx);
     return ctx.db.accounts
@@ -65,7 +65,7 @@ export const resolvers = {
     }));
   },
 
-  // docc:begin auth#^sign-in, auth#^wrong-password
+  // docc:begin auth#^pjds@fz63, auth#^ayqz@uasp ~kgwj
   signIn: ({ email, password }: Args, { db, tokenFor }: Ctx) => {
     const a = db.accounts.find((x) => x.email === normal(email));
     if (!a || a.passwordHash !== hashPassword(password))
@@ -74,7 +74,7 @@ export const resolvers = {
   },
   // docc:end
 
-  // docc:begin auth#^sign-up
+  // docc:begin auth#^dnrs@z38x ~ybvg
   startSignUp: ({ name, email, password }: Args, { db, update, send }: Ctx) => {
     const address = normal(email);
     if (!name.trim()) throw new Error("Enter your name.");
@@ -122,7 +122,7 @@ export const resolvers = {
   },
   // docc:end
 
-  // docc:begin chat#^send
+  // docc:begin chat#^send@9buh ~ceu7
   sendMessage: ({ to, text }: Args, ctx: Ctx) => {
     const me = signedIn(ctx);
     const body = text.trim();
