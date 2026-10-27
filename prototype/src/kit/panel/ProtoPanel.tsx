@@ -1,5 +1,11 @@
 import { BookOpen, FlaskConical, X } from "lucide-react";
-import { type FC, useState } from "react";
+import {
+  type FC,
+  type PointerEvent as ReactPointerEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "@/lib/cn";
 import { people } from "@/spec";
 import { Button } from "@/ui/button";
@@ -17,6 +23,61 @@ const TABS = ["people", "inbox", "world", "reqs"] as const;
 type Tab = (typeof TABS)[number];
 
 /**
+ * Where the tester put the panel: the folded tab sticks to the left or right edge at a
+ * share of the height, the open panel stands at its top-left corner (null — bottom left).
+ * Kept per browser, so a reload does not bring it back over the product.
+ */
+interface Place {
+  side: "left" | "right";
+  y: number;
+  panel: { x: number; y: number } | null;
+}
+const PLACE_KEY = "protokit-panel-place";
+const loadPlace = (): Place => {
+  const fallback: Place = { side: "left", y: 0.5, panel: null };
+  try {
+    return {
+      ...fallback,
+      ...JSON.parse(localStorage.getItem(PLACE_KEY) ?? "{}"),
+    };
+  } catch {
+    return fallback;
+  }
+};
+const clamp = (v: number, max: number) => Math.min(Math.max(v, 0), max);
+
+/**
+ * Drags by a handle with a mouse or a finger: `move` gets the pointer's shift since the
+ * press, `end` whether it moved at all. A shift under 4 px is a press, not a drag.
+ */
+const drag = (
+  e: ReactPointerEvent<HTMLElement>,
+  move: (dx: number, dy: number) => void,
+  end: (moved: boolean) => void,
+) => {
+  if (e.button !== 0) return;
+  const handle = e.currentTarget;
+  const [x0, y0] = [e.clientX, e.clientY];
+  let moved = false;
+  handle.setPointerCapture(e.pointerId);
+  const onMove = (ev: PointerEvent) => {
+    const [dx, dy] = [ev.clientX - x0, ev.clientY - y0];
+    if (!moved && Math.hypot(dx, dy) < 4) return;
+    moved = true;
+    move(dx, dy);
+  };
+  const onUp = () => {
+    handle.removeEventListener("pointermove", onMove);
+    handle.removeEventListener("pointerup", onUp);
+    handle.removeEventListener("pointercancel", onUp);
+    end(moved);
+  };
+  handle.addEventListener("pointermove", onMove);
+  handle.addEventListener("pointerup", onUp);
+  handle.addEventListener("pointercancel", onUp);
+};
+
+/**
  * The prototype's own controls, outside the product: whose eyes this tab takes, the mail
  * the outside world delivered, the world itself (time, network, events, theme) and the
  * requirements behind the screen. Folded into a narrow tab on the left edge by default.
@@ -32,15 +93,83 @@ export const ProtoPanel: FC = () => {
   const me = accountOf(useSession((s) => s.token));
   const name = people(db).find((p) => p.id === me)?.name ?? t.stranger;
 
+  const [place, setPlace] = useState(loadPlace);
+  // While dragged, the folded tab follows the pointer freely; on release it sticks to an edge.
+  const [free, setFree] = useState<{ x: number; y: number } | null>(null);
+  const dragged = useRef(false);
+  const box = useRef<HTMLDivElement>(null);
+  const keep = (next: Place) => {
+    setPlace(next);
+    localStorage.setItem(PLACE_KEY, JSON.stringify(next));
+  };
+  // A smaller window must not hide the panel: positions are clamped on every render.
+  const [, redraw] = useState(0);
+  useEffect(() => {
+    const follow = () => redraw((n) => n + 1);
+    window.addEventListener("resize", follow);
+    return () => window.removeEventListener("resize", follow);
+  }, []);
+
+  const dragTab = (e: ReactPointerEvent<HTMLButtonElement>) => {
+    const tab = e.currentTarget;
+    const r = tab.getBoundingClientRect();
+    dragged.current = false;
+    drag(
+      e,
+      (dx, dy) => setFree({ x: r.left + dx, y: r.top + dy }),
+      (moved) => {
+        dragged.current = moved;
+        if (!moved) return;
+        const at = tab.getBoundingClientRect();
+        setFree(null);
+        keep({
+          ...place,
+          side:
+            at.left + at.width / 2 < window.innerWidth / 2 ? "left" : "right",
+          y: clamp((at.top + at.height / 2) / window.innerHeight, 1),
+        });
+      },
+    );
+  };
+  const dragPanel = (e: ReactPointerEvent<HTMLElement>) => {
+    // The header's buttons stay buttons.
+    if ((e.target as Element).closest("button") || !box.current) return;
+    const r = box.current.getBoundingClientRect();
+    let to = { x: r.left, y: r.top };
+    drag(
+      e,
+      (dx, dy) => {
+        to = { x: r.left + dx, y: r.top + dy };
+        setPlace((p) => ({ ...p, panel: to }));
+      },
+      (moved) => moved && keep({ ...place, panel: to }),
+    );
+  };
+
+  const size = box.current?.getBoundingClientRect();
+  const panelAt = place.panel && {
+    left: clamp(place.panel.x, window.innerWidth - (size?.width ?? 0)),
+    top: clamp(place.panel.y, window.innerHeight - (size?.height ?? 0)),
+  };
+  const tabAt = free
+    ? { left: free.x, top: free.y }
+    : {
+        [place.side]: 0,
+        top: `clamp(2.5rem, ${place.y * 100}%, calc(100% - 2.5rem))`,
+        transform: "translateY(-50%)",
+      };
+
   return (
     <>
       <DocsLayer />
       <div
         data-proto-panel
+        ref={box}
         className={cn(
           "fixed z-[80] font-sans",
-          open ? "bottom-4 left-4" : "top-1/2 left-0 -translate-y-1/2",
+          open && !panelAt && "bottom-4 left-4",
         )}
+        style={open ? (panelAt ?? undefined) : tabAt}
       >
         {open ? (
           <div
@@ -48,7 +177,11 @@ export const ProtoPanel: FC = () => {
             aria-label={t.panel}
             className="flex max-h-[min(640px,calc(100dvh-2rem))] w-[min(360px,calc(100vw-2rem))] flex-col overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-2xl"
           >
-            <header className="flex items-center justify-between gap-2 border-b py-2 pr-2 pl-4">
+            {/* The header is the handle: the panel goes wherever it is out of the way. */}
+            <header
+              onPointerDown={dragPanel}
+              className="flex cursor-grab touch-none items-center justify-between gap-2 border-b py-2 pr-2 pl-4 select-none active:cursor-grabbing"
+            >
               <span className="flex items-center gap-2 text-sm font-semibold">
                 <FlaskConical className="size-4 text-primary" /> {t.panelTitle}
               </span>
@@ -107,13 +240,26 @@ export const ProtoPanel: FC = () => {
             </div>
           </div>
         ) : (
-          // Folded: a narrow tab on the left edge, mid-height, clear of headers, composers and tab bars.
+          // Folded: a narrow tab on an edge, mid-height by default, clear of headers, composers
+          // and tab bars; dragged, it moves along the height and to the other edge.
           <button
             type="button"
             data-testid="proto-panel-open"
-            onClick={() => setOpen(true)}
+            onPointerDown={dragTab}
+            onClick={() => {
+              // The release of a drag is not a press.
+              if (dragged.current) dragged.current = false;
+              else setOpen(true);
+            }}
             title={t.openPanel(name)}
-            className="flex flex-col items-center gap-1 rounded-r-xl border border-l-0 bg-popover py-2 pr-1.5 pl-1 shadow-lg transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className={cn(
+              "flex cursor-grab touch-none flex-col items-center gap-1 border bg-popover py-2 pr-1.5 pl-1 shadow-lg transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 active:cursor-grabbing",
+              free
+                ? "rounded-xl"
+                : place.side === "left"
+                  ? "rounded-r-xl border-l-0"
+                  : "rounded-l-xl border-r-0",
+            )}
           >
             <Avatar name={me ? name : "?"} muted={!me} />
             <span className="sr-only">{t.openPanel(name)}</span>

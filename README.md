@@ -13,7 +13,8 @@ two browser tabs can be two different people talking to each other.
 
 - **A product, not a mockup.** Every state is reached by acting — a wrong password, an
   expired deadline, a lost connection — never by flipping a switch on the screen.
-- **A standard panel**, the same in every prototype, folded into a tab on the left edge:
+- **A standard panel**, the same in every prototype, folded into a tab on the screen's
+  edge; the tab and the open panel are dragged out of the way and stay where they were put:
   - **People** — whose eyes this tab sees through (a fake token per tab, one shared world);
   - **Inbox** — letters and texts the system sent, codes, buttons for outside actions;
   - **World** — move time forward, cut the network, trigger events, switch the theme, reset;

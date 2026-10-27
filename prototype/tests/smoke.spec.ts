@@ -114,3 +114,48 @@ test("the theme is chosen in the panel", async ({ page }) => {
   await panelDialog(page).getByRole("button", { name: t.themes.light }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });
+
+test("the panel and its tab are dragged out of the way and stay there", async ({
+  page,
+}) => {
+  await go(page, "/");
+  const tab = page.getByTestId("proto-panel-open");
+  const drag = async (
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+  ) => {
+    await page.mouse.move(from.x, from.y);
+    await page.mouse.down();
+    await page.mouse.move(to.x, to.y, { steps: 5 });
+    await page.mouse.up();
+  };
+  const view = page.viewportSize() ?? { width: 1280, height: 800 };
+  const at = await tab.boundingBox();
+  if (!at) throw new Error("no panel tab");
+  // Dropped past the middle, the tab sticks to the right edge; a drag does not open the panel.
+  await drag(
+    { x: at.x + at.width / 2, y: at.y + at.height / 2 },
+    { x: view.width - 100, y: 120 },
+  );
+  await expect(panelDialog(page)).toBeHidden();
+  const right = await tab.boundingBox();
+  expect(Math.round((right?.x ?? 0) + (right?.width ?? 0))).toBe(view.width);
+  expect(right?.y ?? 999).toBeLessThan(200);
+  // A plain press still opens it; the panel is dragged by its header.
+  await tab.click();
+  const header = panelDialog(page).locator("header");
+  const h = await header.boundingBox();
+  if (!h) throw new Error("no panel header");
+  await drag({ x: h.x + 40, y: h.y + h.height / 2 }, { x: 400, y: 60 });
+  const moved = await panelDialog(page).boundingBox();
+  expect(Math.round(moved?.y ?? 0)).toBeLessThan(80);
+  // A reload keeps both places.
+  await page.reload();
+  await expect(tab).toBeVisible();
+  const kept = await tab.boundingBox();
+  expect(Math.round((kept?.x ?? 0) + (kept?.width ?? 0))).toBe(view.width);
+  await tab.click();
+  expect(
+    Math.round((await panelDialog(page).boundingBox())?.y ?? 0),
+  ).toBeLessThan(80);
+});

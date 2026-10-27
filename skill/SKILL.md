@@ -18,8 +18,9 @@ description: >
 A prototype is a **product**, not a mockup: a person opens it, sees sign-in, signs in,
 works, and the system answers like a real one. There is no server: GraphQL requests
 run in the browser against `prototype/schema.graphql`. Everything that is not the
-product lives in the **panel** — a narrow tab on the left edge. The product itself
-holds no service word.
+product lives in the **panel** — a narrow tab on the screen's edge; the tester drags
+the tab and the open panel off whatever they cover, and they stay there after a
+reload. The product itself holds no service word.
 
 Words this skill thinks in:
 
