@@ -110,10 +110,12 @@ screens and paths were already accepted.
    the panel, service pages, the theme switch, comments, SSR settings, message files.
 3. Files the kit's `.gitignore` ignores but git still tracks (`src/generated/*` and the
    like): `git rm --cached` them.
-4. A moved file is a new link to docc: `npm run docs` records it **without** a DOC402.
-   For each moved file compare its links' fingerprints in `docc.lock` with the old
-   path's in `/tmp/docc.lock.before`: a different fingerprint means the code changed on
-   the way — read both sides as for DOC402.
+4. A moved region keeps its confirmed fingerprints (docc 0.4.6+) when its target lost
+   exactly one region and gained exactly one: a change on the way raises DOC402 — work
+   it through as any. A target with several regions is not paired: its new regions are
+   recorded **without** a DOC402. For those, compare the fingerprints in `docc.lock`
+   with the old paths' in `/tmp/docc.lock.before`: a different one means the code
+   changed on the way — read both sides as for DOC402.
 
 ## Pitfalls
 
