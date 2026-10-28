@@ -20,7 +20,7 @@ two browser tabs can be two different people talking to each other.
     **documentation mode**: hover any element to read the paragraph it implements and jump
     to it.
 - **Synced with the documents** through [docc](https://github.com/uxname/docc), strictly:
-  every paragraph has a permanent code (`K7F2`), every file of rules and screens names
+  every paragraph has a permanent code (`PAY-14`: the document's key and a number), every file of rules and screens names
   the paragraphs it implements together with the version of each it was checked against,
   and carries the print of its own code. Edit a paragraph — the code that depends on it
   stops passing the check; edit the code — so do its paragraphs; the commit waits until
