@@ -31,7 +31,8 @@ export interface Requirement {
  */
 export const requirement = (to: string): Requirement | null => {
   const [doc, code = ""] = to.split("#^");
-  const anchor = code.toLowerCase();
+  // codes are upper case (PAY-14) and matched in any case
+  const anchor = code.toUpperCase();
   const page = pages[doc];
   const a = page?.anchors[anchor];
   if (!page || !a) return null;
@@ -45,7 +46,7 @@ export const requirement = (to: string): Requirement | null => {
     to,
     doc,
     anchor,
-    code: anchor.toUpperCase(),
+    code: anchor,
     title: page.title,
     text: a.text,
     href,

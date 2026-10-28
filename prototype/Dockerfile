@@ -7,9 +7,9 @@ FROM node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b533
 
 # docc builds the documentation index and docs.html. Pinned by version and checksum
 # (checksums.txt of the GitHub release); bump all three together.
-ARG DOCC_VERSION=v0.7.0
-ARG DOCC_SHA256_AMD64=28d7bd8d7236aeec2e73da8a152a57ee568dce7ea2854970b8ed413a457efa9d
-ARG DOCC_SHA256_ARM64=12e73166c06824e6c5d360738bf30016af1a754feb018abdea17a00004646791
+ARG DOCC_VERSION=v0.8.0
+ARG DOCC_SHA256_AMD64=55b96849ec0dc712c3a243bbcde0fe824cdfe48a2ca77362a03d7a704154c687
+ARG DOCC_SHA256_ARM64=c6fa21bf247ae5e639e43c43cd441bb4460164e091dc4dcfbbe28a308aa7e0b3
 ARG TARGETARCH
 RUN set -eu; \
     case "$TARGETARCH" in \

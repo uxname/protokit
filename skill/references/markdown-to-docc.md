@@ -29,7 +29,8 @@ is the `docc` skill.
    source's outline.
 4. **A paragraph per item.** A list item or paragraph of the source is one `body` line,
    word for word (bold and `code` stay Markdown), written without a code: `docc build`
-   ends every block in its permanent code ` ^k7f2`.
+   ends every block in its permanent code ` ^PAY-14` (the document's `key`, which docc
+   writes too, and the next number).
 5. **A table** is one paragraph, rows separated by `\n`.
 6. `docc validate --format json --max-diagnostics 0`. Words the style rules flag
    (DOC352 "several", DOC353 "new") in verbatim text are terms ("new password",

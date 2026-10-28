@@ -42,9 +42,10 @@ Words this skill thinks in:
 - **Rule** — a number, condition, text or type from the documents in code, inside a
   **region** `// docc:begin <targets>` … `// docc:end`. docc notices edits of a region
   (DOC402).
-- **Code** — the permanent name of a block of the documents, ` ^k7f2` at its end, given
-  by `docc build`. Agents never write, change or move codes; people read them upper case
-  (`K7F2`) in the readers and the panel and use them to point at a paragraph.
+- **Code** — the permanent name of a block of the documents, ` ^PAY-14` at its end: the
+  document's `key` and a number, given by `docc build`. Agents never write, change or move
+  codes or keys; people read them in the readers and the panel and use them to point at a
+  paragraph.
 - **Tag** — `// docc: <id>#^<code>@<hash>, … ~<print>` on the first line of a file: the
   file implements those paragraphs. The hash is the version of the paragraph the file was
   checked against, the print the version of the file itself. A change of either side

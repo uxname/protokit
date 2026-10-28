@@ -5,10 +5,11 @@ having read **both** sides: the paragraph and the code.
 
 ## How a link knows the other side changed
 
-Every block of the documents ends in a permanent code (` ^k7f2`, given by `docc build`;
-never write, change or move one by hand). Every link carries the hash of the version it
-was checked against: `// docc: i4#^k7f2@3a9c` in code, `[[i4#^k7f2@3a9c]]` or
-`[[i4@9b1e]]` (a whole document) in the documents. A tag line ends in the print of its
+Every block of the documents ends in a permanent code (` ^AUTH-3`: the document's `key` and
+a number, given by `docc build`; never write, change or move one by hand). Every link
+carries the hash of the version it was checked against: `// docc: auth#^AUTH-3@3a9c` in
+code, `[[auth#^AUTH-3@3a9c]]` or
+`[[auth@9b1e]]` (a whole document) in the documents. A tag line ends in the print of its
 file (`~e91d`), a `docc:begin` line in the print of its region. docc compares them with
 what stands now; a difference fails `docc check`, and with it the commit.
 
@@ -33,7 +34,7 @@ hash — it is not a value to paste without reading.
 | `check-sync`: `Req` without a tag | the element is marked, nothing tracks it | add the target to the file's `// docc:` line |
 | DOC403 | a document of a kind with `x-docc-covered` has no tag at all | as DOC404 |
 
-A new tag or a new target in one is written without a hash (`// docc: i4#^k7f2`):
+A new tag or a new target in one is written without a hash (`// docc: auth#^AUTH-3`):
 docc's DOC209 then names the hash to write after you read the block.
 
 ## The old value elsewhere
@@ -62,7 +63,7 @@ what was chosen and why.
 ## Rules of hashes and prints
 
 - Write a hash or a print only after both sides are read and say the same — one place
-  at a time. A region with several targets (`autolock#^k7f2, criteria#^m2pq`) is checked
+  at a time. A region with several targets (`autolock#^AL-2, criteria#^CR-5`) is checked
   against each of them.
 - `npm run lint:fix` in `prototype/` first, then the prints: formatting changes the
   code, and a print written before formatting breaks again.

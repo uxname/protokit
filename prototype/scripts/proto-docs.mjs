@@ -13,7 +13,8 @@ const root = doccRoot();
 const config = JSON.parse(readFileSync(join(root, "docc.json"), "utf8"));
 const lang = config.lang ?? "en";
 const compiled = JSON.parse(docc(root, ["compile", "--format", "json"]));
-const CODE = /\s\^[a-z0-9]{4}$/;
+// A block code: the document's key and a number, ^PAY-14 (docc 0.8).
+const CODE = /\s\^[A-Z][A-Z0-9]{1,4}-[1-9][0-9]*$/;
 const pages = {};
 for (const page of compiled.pages) {
   const anchors = {};

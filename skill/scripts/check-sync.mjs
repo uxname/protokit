@@ -42,7 +42,7 @@ for (const file of files.sort()) {
     const m = line.match(TAG);
     if (m && !line.includes("docc:end")) {
       for (const t of m[1].split(",")) {
-        // `i4#^k7f2@3a9c ~e91d` → `i4#^k7f2`: the version hash and the print are docc's.
+        // `auth#^AUTH-3@3a9c ~e91d` → `auth#^auth-3`: the version hash and the print are docc's.
         const target = t.trim().split(/\s/)[0].replace(/@.*$/, "").toLowerCase();
         if (target) own.add(target);
       }
