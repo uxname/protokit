@@ -53,7 +53,13 @@ try {
   r = run();
   assert.equal(r.status, 1);
   assert.match(r.stdout, /<Req to="rules#\^other"> without/);
-  console.log("check-sync.test: 6 cases passed");
+
+  // A block covered only by an SQL migration's `-- docc:` line counts as covered.
+  put("prototype/src/A.tsx", '// docc: rules#^kf2m, s1#^s9gn\nexport const A = () => <Req to="rules#^kf2m"><b /></Req>;\n');
+  put("prototype/src/db/0001_trash.sql", "-- docc: rules#^tr4s@bbbb ~eeee\nCREATE TABLE trash (id int);\n");
+  r = run();
+  assert.equal(r.status, 0, r.stdout);
+  console.log("check-sync.test: 7 cases passed");
 } finally {
   rmSync(dir, { recursive: true, force: true });
 }

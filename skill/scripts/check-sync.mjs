@@ -4,8 +4,8 @@
 //      code (docc's own DOC403 only checks whole documents). Covered: the blocks of the
 //      fields marked "x-docc-covered": true in a kind's schema; a kind marked at its root
 //      with no marked field — all its blocks.
-//   2. No tag sits in a JSX comment `{/* docc: … */}`: docc reads `//` and `#` comments
-//      only and skips those silently, broken targets included.
+//   2. No tag sits in a JSX comment `{/* docc: … */}`: docc reads a tag only on a line that
+//      starts with a comment marker and skips those silently, broken targets included.
 //   3. Every `<Req to="…">` target is also a `docc:` tag of the same file, so a change
 //      of the paragraph reaches that file as DOC209.
 //   4. Every file of the rules (`src/spec/`) and screens (`src/screens/`) carries a `docc:`
@@ -53,8 +53,9 @@ for (const page of JSON.parse(out).pages) {
   }
 }
 
-const TAG = /(?:\/\/|#)\s*docc(?::begin)?:?\s+(.+)$/;
-const NONE = /(?:\/\/|#)\s*docc-none:\s*\S/;
+// `//` (code), `#` (GraphQL, YAML) and `--` (SQL migrations): the comments tags are written in.
+const TAG = /(?:\/\/|#|--)\s*docc(?::begin)?:?\s+(.+)$/;
+const NONE = /(?:\/\/|#|--)\s*docc-none:\s*\S/;
 const MUST_TAG = /(^|\/)src\/(spec|screens)\//;
 const JSX_TAG = /\{\s*\/\*\s*docc/;
 const LINK = /<Req\b[^>]*?\bto="([^"]+)"/g;
