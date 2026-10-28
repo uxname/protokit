@@ -44,6 +44,11 @@ git clone --recurse-submodules https://github.com/uxname/LiteStack
 cd LiteStack/protokit/prototype && npm install && npm run dev
 ```
 
+To look at it without Node or docc, from `LiteStack/protokit`:
+`docker compose up -d --build`, then http://localhost:3100 (`PROTOTYPE_PORT` changes
+the port). The image reads the documents from the parent folder and serves a static
+build, documentation page included.
+
 It starts as the smallest prototype that runs: the home page and the sign-in page,
 tied to LiteStack's sign-in paragraphs. Sign in as `ada@example.com` /
 `analytical-engine`, or pick Ada in the panel's **People**. In **Docs**, turn on

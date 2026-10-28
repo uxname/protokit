@@ -1,0 +1,7 @@
+node_modules
+dist
+src/generated
+public/docs.html
+test-results
+playwright-report
+screens

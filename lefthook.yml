@@ -15,6 +15,10 @@ pre-commit:
     check-sync-selftest:
       glob: "skill/scripts/check-sync*.mjs"
       run: node skill/scripts/check-sync.test.mjs
+    compose:
+      # The compose file and the image recipe parse (no build: that needs the network).
+      glob: "{docker-compose.yml,prototype/Dockerfile,prototype/.dockerignore}"
+      run: sh -c 'if command -v docker >/dev/null 2>&1; then docker compose config -q; else echo "docker not installed — skipping compose check"; fi'
     check:
       # The docs index, GraphQL types, Biome, TypeScript.
       run: sh -c 'if [ -f ../docc.json ]; then cd prototype && npm run check; fi'

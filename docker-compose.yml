@@ -1,0 +1,16 @@
+# The prototype, built and served as a static site: `docker compose up -d --build`, then
+# http://localhost:3100 (PROTOTYPE_PORT to change it). Run from a LiteStack clone: the
+# build reads the documents from the parent folder (the `meta` context). For work on
+# the prototype itself, `npm run dev` in prototype/ reloads on every edit.
+services:
+  prototype:
+    image: "protokit-prototype:local"
+    # This file runs THIS checkout: always rebuild rather than start an old image.
+    pull_policy: build
+    build:
+      context: prototype
+      additional_contexts:
+        meta: ..
+    ports:
+      - "${PROTOTYPE_PORT:-3100}:80"
+    restart: unless-stopped
