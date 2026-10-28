@@ -1,4 +1,4 @@
-// docc: auth#^p3xm@mvg9, auth#^mpv2@nmae ~cz7x
+// docc: auth#^p3xm@mvg9, auth#^mpv2@nmae ~9mxw
 import { Link } from "@tanstack/react-router";
 import { LogIn, LogOut } from "lucide-react";
 import type { FC } from "react";
@@ -12,11 +12,12 @@ import { Button } from "@/ui/button";
 export const Home: FC = () => {
   const token = useSession((s) => s.token);
   const setToken = useSession((s) => s.setToken);
-  const [{ data }] = useQuery({ query: MeDocument, pause: !token });
+  const [{ data, error }] = useQuery({ query: MeDocument, pause: !token });
   const me = token ? data?.me : null;
   // Until the account is known the header stays empty: a signed-in person never sees
-  // "Sign In" for a moment. A token whose account is gone (the world was reset) ends as a stranger.
-  const loading = Boolean(token) && data === undefined;
+  // "Sign In" for a moment. A token whose account is gone (the world was reset) ends as a stranger,
+  // and so does one whose account cannot load (the network is off): an error is "no account known".
+  const loading = Boolean(token) && data === undefined && !error;
 
   const actions = loading ? null : me ? (
     <>

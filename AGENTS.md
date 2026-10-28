@@ -18,8 +18,9 @@ This repository is the kit itself — the prototype (`prototype/`) and the agent
 - The skill and the kit change together: a new kit feature is described in the skill in
   the same commit.
 - The checks need `docc.json` in a parent folder, so they run inside a LiteStack clone.
-  Before a commit, all green: `lefthook.yml` runs them — `docc check --max-warnings 0`
-  and `check-sync.mjs` from the parent, `check-sync.test.mjs`, and in `prototype/`
-  `npm run check`; before a push, `npm run test:e2e`.
+  Before a commit, all green: `lefthook.yml` runs them — `docc check protokit` (this
+  repository's tags only) and `check-sync.mjs` from the parent, `check-sync.test.mjs`,
+  and in `prototype/` `npm run check`; before a push, `npm run test:e2e`. Coverage —
+  every requirement block has a tag — is docc's (DOC404, docc 0.7+).
 - The product's name lives in `prototype/src/components/brand.ts` and `index.html` only:
   LiteStack's rename script rewrites it there, and a tagged file never holds it.

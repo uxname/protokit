@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { expectReqs, go, shot, slowServer } from "./helpers";
+import { actAs, expectReqs, go, setOnline, shot, slowServer } from "./helpers";
 
 /** The product's paths, step by step as a person walks them; each state is reached by acting, never by switching. */
 
@@ -43,6 +43,19 @@ test("a stranger signs in from the home page and signs out", async ({
   await expect(page.getByRole("button", { name: "Logout" })).toBeVisible();
   await page.getByRole("button", { name: "Logout" }).click();
   await expect(page.getByRole("link", { name: "Sign In" })).toBeVisible();
+});
+
+test("an account that cannot load leaves the stranger's Sign In, not an empty header", async ({
+  page,
+}) => {
+  await go(page, "/");
+  await actAs(page, "Ada Lovelace");
+  await expect(page.getByRole("button", { name: "Logout" })).toBeVisible();
+  await setOnline(page, false);
+  await page.reload();
+  await expect(page.getByRole("link", { name: "Sign In" })).toBeVisible();
+  await shot(page, "03c-home-offline");
+  await setOnline(page, true);
 });
 
 test("a wrong address shows the page for it, with a way home", async ({

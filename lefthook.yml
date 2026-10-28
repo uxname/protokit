@@ -9,9 +9,11 @@
 pre-commit:
   commands:
     docs:
-      # The documents and every docc: tag agree (DOC209, DOC402), and every requirement
-      # paragraph, every screen and every rule file of the prototype is tagged.
-      run: sh -c 'if [ -f ../docc.json ]; then kit=$(pwd); cd .. && docc check --max-warnings 0 && node "$kit/skill/scripts/check-sync.mjs"; fi'
+      # This repository's tags agree with the documents (DOC209, DOC402), this change
+      # leaves no requirement without its last tag (DOC404), and every screen and rule
+      # file of the prototype is tagged. Only this repository's files: an unfinished
+      # edit elsewhere does not block it — the meta's hook checks the whole project.
+      run: sh -c 'if [ -f ../docc.json ]; then kit=$(pwd); cd .. && docc check "${kit##*/}" --max-warnings 0 && node "$kit/skill/scripts/check-sync.mjs"; fi'
     check-sync-selftest:
       glob: "skill/scripts/check-sync*.mjs"
       run: node skill/scripts/check-sync.test.mjs

@@ -27,11 +27,11 @@ hash — it is not a value to paste without reading.
 | DOC212 | one code on two blocks (a copied paragraph) | keep the code on the original, remove it from the copy; `docc build` gives the copy its own |
 | DOC216 | a block without a code | `docc build` |
 | DOC401 | a tag points at a document or code that does not exist | the block was deleted — remove the tag and what it required, or ask the user; codes never change, so there is nothing to rename |
-| `check-sync`: block without a tag | a new requirement paragraph | show it on a screen (rule + `Req` + tag) or add it to `not-shown.ts` with the reason |
+| DOC404 | a requirement block without a tag: a new paragraph, or this change removed its last tag | show it on a screen (rule + `Req` + tag) or add it to `not-shown.ts` with the reason; where the product carries tags too, a tag there covers it |
 | `check-sync`: file without a tag | a file of `src/spec` or `src/screens` names no paragraph | add the `// docc:` line with the paragraphs it implements; a file with nothing of the documents (an index, the seed data, a wrong-address page) says why on `// docc-none: <reason>` |
 | `check-sync`: tag in a JSX comment | docc does not see it | move it to a `//` line above the markup |
 | `check-sync`: `Req` without a tag | the element is marked, nothing tracks it | add the target to the file's `// docc:` line |
-| DOC403 | a document of a kind with `x-docc-covered` has no tag at all | as "block without a tag" |
+| DOC403 | a document of a kind with `x-docc-covered` has no tag at all | as DOC404 |
 
 A new tag or a new target in one is written without a hash (`// docc: i4#^k7f2`):
 docc's DOC209 then names the hash to write after you read the block.

@@ -36,7 +36,7 @@ protokit is the prototype of [LiteStack](https://github.com/uxname/LiteStack), a
 submodule of its meta-repo: the documents are LiteStack's `docs/src`, the prototype is
 `prototype/` here. Its checks read `docc.json` from a parent folder, so a clone of this
 repository alone does not pass them — work in a LiteStack clone. You need Node.js 22+ and
-[docc](https://github.com/uxname/docc) 0.6.0+:
+[docc](https://github.com/uxname/docc) 0.7.0+:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/uxname/docc/main/install.sh | sh
@@ -116,8 +116,8 @@ From the folder with `docc.json` (in LiteStack, the meta root); `lefthook.yml` r
 on every commit and push of this repository when it sits under such a folder:
 
 ```bash
-docc check --max-warnings 0                       # documents and their links to code
-node protokit/skill/scripts/check-sync.mjs        # every requirement paragraph is covered
+docc check --max-warnings 0                       # documents, links to code, every requirement block covered
+node protokit/skill/scripts/check-sync.mjs        # every screen and rule file is tagged, every Req too
 node protokit/skill/scripts/check-sync.test.mjs   # check-sync's own test
 cd protokit/prototype && npm run check            # Biome and TypeScript
 npm run test:e2e                                  # the panel, the paths, the screenshots
