@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { expectReqs, go, shot } from "./helpers";
+import { expectReqs, go, shot, slowServer } from "./helpers";
 
 /** The product's paths, step by step as a person walks them; each state is reached by acting, never by switching. */
 
@@ -30,6 +30,17 @@ test("a stranger signs in from the home page and signs out", async ({
   );
   await expectReqs(page);
   await shot(page, "03-home-signed-in");
+  // While the account loads, the header offers nothing — never a stranger's "Sign In".
+  await slowServer(page, 3000);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Welcome", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign In" })).toHaveCount(0);
+  await shot(page, "03b-home-loading");
+  await slowServer(page, null);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Logout" })).toBeVisible();
   await page.getByRole("button", { name: "Logout" }).click();
   await expect(page.getByRole("link", { name: "Sign In" })).toBeVisible();
 });
