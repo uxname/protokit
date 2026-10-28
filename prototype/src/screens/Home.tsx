@@ -1,4 +1,4 @@
-// docc: auth#^p3xm@mvg9, auth#^mpv2@nmae ~9mxw
+// docc: auth#^AUT-1@mvg9, auth#^AUT-5@nmae ~4765
 import { Link } from "@tanstack/react-router";
 import { LogIn, LogOut } from "lucide-react";
 import type { FC } from "react";
@@ -22,14 +22,14 @@ export const Home: FC = () => {
   const actions = loading ? null : me ? (
     <>
       <span className="text-sm text-muted-foreground">{me.email}</span>
-      <Req to="auth#^mpv2">
+      <Req to="auth#^AUT-5">
         <Button variant="outline" size="sm" onClick={() => setToken(null)}>
           <LogOut /> Logout
         </Button>
       </Req>
     </>
   ) : (
-    <Req to="auth#^p3xm">
+    <Req to="auth#^AUT-1">
       <Button size="sm" asChild>
         <Link to="/sign-in">
           <LogIn /> Sign In

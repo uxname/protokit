@@ -1,4 +1,4 @@
-// docc: auth#^p3xm@mvg9 ~8gv6
+// docc: auth#^AUT-1@mvg9 ~vvva
 
 import { Navigate, useNavigate } from "@tanstack/react-router";
 import { KeyRound } from "lucide-react";
@@ -59,7 +59,7 @@ export const SignIn: FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Req to="auth#^p3xm">
+          <Req to="auth#^AUT-1">
             <form onSubmit={submit} noValidate>
               <FieldGroup>
                 <Field>
