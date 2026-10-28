@@ -121,7 +121,7 @@ export const expectReqs = async (page: Page) => {
   for (const target of targets) {
     const [doc, code = ""] = target.split("#^");
     expect(
-      pages[doc]?.anchors[code.toLowerCase()],
+      pages[doc]?.anchors[code.toUpperCase()],
       `<Req to="${target}">: no such paragraph`,
     ).toBeTruthy();
   }

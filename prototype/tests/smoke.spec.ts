@@ -55,7 +55,7 @@ test("every block code opens its block in docs.html", async ({ page }) => {
   for (const { code, hash } of links) {
     await page.goto(`/docs.html#${hash}`);
     await expect(
-      page.locator(".code", { hasText: code.toUpperCase() }),
+      page.locator(".code").getByText(code, { exact: true }),
       hash,
     ).toBeAttached();
   }
@@ -83,7 +83,7 @@ test("documentation mode shows the paragraph behind an element", async ({
   expect(target, "a screen with a <Req> element").not.toBeNull();
   if (!target) return;
   const [doc, code] = target.to.split("#^");
-  const paragraph = pages[doc].anchors[code.toLowerCase()].text.replace(
+  const paragraph = pages[doc].anchors[code.toUpperCase()].text.replace(
     /\*\*/g,
     "",
   );
@@ -97,7 +97,7 @@ test("documentation mode shows the paragraph behind an element", async ({
     card.getByRole("link", { name: t.openInDocs }).first(),
   ).toHaveAttribute(
     "href",
-    new RegExp(`${doc}--${code.toLowerCase()}@[a-z0-9]{4}$`),
+    new RegExp(`${doc}--${code.toUpperCase()}@[a-z0-9]{4}$`),
   );
   await expect(card).toContainText(code.toUpperCase());
   // A click pins the card and does not act on the product.
