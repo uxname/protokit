@@ -15,7 +15,7 @@ list. Two of anything drift apart, and the drift is what people see.
 | What colours exist? | the two theme blocks in `src/index.css` |
 | What controls exist? | `src/ui` (table below) |
 | How does a screen look in every state? | the screenshots: `npm run test:e2e`, then `screens/*.png` |
-| How is a sign-in, a list, a detail screen built? | the demo: `src/screens`, `src/components` |
+| How is a sign-in, a list, a detail screen built? | sign-in: `src/screens/SignIn.tsx`; a list and a detail screen: the "Family chat" demo in the protokit history (`git show c3d7c9a:prototype/src/screens/Chats.tsx`) |
 | What is a good composition for a new screen? | shadcn blocks as a pattern, built from `src/ui`: `login-03` (sign-in), `signup-03`, `sidebar-07` (app frame), `dashboard-01`. Read one: `curl -s https://ui.shadcn.com/r/styles/new-york-v4/<block>.json \| jq -r '.files[].content'` |
 
 ## Controls (`src/ui`)

@@ -1,47 +1,16 @@
 # The contract of the simulated server. Resolvers: src/spec/resolvers.ts.
 
-# docc:begin auth#^pjds@fz63, auth#^dnrs@z38x ~uykb
 type Me {
   id: ID!
   name: String!
   email: String!
 }
-# docc:end
-
-# docc:begin chat#^rbtf@j5xa, chat#^send@9buh, chat#^yy76@j34n ~4rze
-type Dialog {
-  "The other person."
-  id: ID!
-  name: String!
-  lastText: String
-  "True when the last message is mine."
-  lastMine: Boolean!
-  lastAt: Float
-  unread: Int!
-}
-
-type Message {
-  id: ID!
-  text: String!
-  at: Float!
-  mine: Boolean!
-}
-# docc:end
 
 type Query {
   me: Me
-  dialogs: [Dialog!]!
-  messages(with: ID!): [Message!]!
-  person(id: ID!): Me
 }
 
 type Mutation {
   "Returns the session token."
   signIn(email: String!, password: String!): String!
-  "Sends a code to the e-mail; the account appears after confirmSignUp."
-  startSignUp(name: String!, email: String!, password: String!): Boolean!
-  "Returns the session token."
-  confirmSignUp(email: String!, code: String!): String!
-  sendMessage(to: ID!, text: String!): Message!
-  markRead(with: ID!): Boolean!
 }

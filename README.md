@@ -3,8 +3,6 @@
 **Product prototypes that look and work like the real thing — on a simulated server, tied
 paragraph by paragraph to their documents.**
 
-![The Family chat demo with the prototype panel and documentation mode](.github/assets/demo.png)
-
 protokit is a starter kit for clickable prototypes built by an AI agent (or by hand) from a
 project's requirement documents. There is no backend: GraphQL requests run in the browser
 against a schema and resolvers you write as plain functions. Yet the prototype behaves like
@@ -32,20 +30,26 @@ two browser tabs can be two different people talking to each other.
 - **Static output.** `npm run build` gives a folder you can put on any static host and
   send to a client.
 
-## Quick start (the demo)
+## Where it runs
 
-You need Node.js 22+ and [docc](https://github.com/uxname/docc):
+protokit is the prototype of [LiteStack](https://github.com/uxname/LiteStack), a
+submodule of its meta-repo: the documents are LiteStack's `docs/src`, the prototype is
+`prototype/` here. Its checks read `docc.json` from a parent folder, so a clone of this
+repository alone does not pass them — work in a LiteStack clone. You need Node.js 22+ and
+[docc](https://github.com/uxname/docc) 0.6.0+:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/uxname/docc/main/install.sh | sh
-git clone https://github.com/uxname/protokit && cd protokit/prototype
-npm install
-npm run dev
+git clone --recurse-submodules https://github.com/uxname/LiteStack
+cd LiteStack/protokit/prototype && npm install && npm run dev
 ```
 
-Sign in as `anna@millers.family` / `sunny-river`, or pick anyone in the panel's
-**People**. Open a second tab as Ben and write to each other. In **World**, press "+1 day"
-or switch the network off. In **Docs**, turn on documentation mode and hover around.
+It starts as the smallest prototype that runs: the home page and the sign-in page,
+tied to LiteStack's sign-in paragraphs. Sign in as `ada@example.com` /
+`analytical-engine`, or pick Ada in the panel's **People**. In **Docs**, turn on
+documentation mode and hover around. A product made from LiteStack grows its own
+screens from here; when the prototype no longer pays for itself, the product removes
+the submodule and goes on without it.
 
 ## With an AI agent
 
@@ -70,8 +74,8 @@ npx -y degit uxname/protokit/prototype prototype
 cd prototype && npm install
 ```
 
-Then follow [`skill/references/setup.md`](skill/references/setup.md): remove the demo,
-describe your server in `src/spec` and `schema.graphql`, write screens in `src/screens`,
+Then follow [`skill/references/setup.md`](skill/references/setup.md): replace the
+starting screens, describe your server in `src/spec` and `schema.graphql`, write screens in `src/screens`,
 paths in `tests/journeys.spec.ts`. The screen rules are in
 [`prototype/DESIGN.md`](prototype/DESIGN.md).
 
@@ -89,7 +93,6 @@ prototype.
 ## How it is built
 
 ```
-docc.json, docs/        the demo's requirement documents (docc)
 skill/                  the agent skill: SKILL.md, references, check-sync
 prototype/
   src/kit/              the kit: panel, world, sessions, clock, simulated server — never edited
@@ -104,11 +107,15 @@ Biome, Playwright.
 
 ## Checks
 
+From the folder with `docc.json` (in LiteStack, the meta root); `lefthook.yml` runs them
+on every commit and push of this repository when it sits under such a folder:
+
 ```bash
-docc check --max-warnings 0              # documents and their links to code
-node skill/scripts/check-sync.mjs        # every requirement paragraph is covered
-cd prototype && npm run check            # Biome and TypeScript
-npm run test:e2e                         # the panel, the paths, the screenshots
+docc check --max-warnings 0                       # documents and their links to code
+node protokit/skill/scripts/check-sync.mjs        # every requirement paragraph is covered
+node protokit/skill/scripts/check-sync.test.mjs   # check-sync's own test
+cd protokit/prototype && npm run check            # Biome and TypeScript
+npm run test:e2e                                  # the panel, the paths, the screenshots
 ```
 
 ## Credits

@@ -5,7 +5,7 @@ can check.
 
 ## 1. Tools
 
-- Node.js 22+ and `docc` 0.5.0+ on `PATH` (`docc --version`; older: `docc update`). No docc:
+- Node.js 22+ and `docc` 0.6.0+ on `PATH` (`docc --version`; older: `docc update`). No docc:
   `curl -fsSL https://raw.githubusercontent.com/uxname/docc/main/install.sh | sh`
   (Windows: `irm https://raw.githubusercontent.com/uxname/docc/main/install.ps1 | iex`).
 - `docc.json` has `"lang"` — the documents' language. The panel speaks it (`ru`
@@ -20,18 +20,17 @@ cd prototype && npm install --no-audit --no-fund
 
 Add to `../docc.json`: `"trace": {"scan": ["prototype/src/**", "prototype/schema.graphql"]}`.
 
-## 3. Remove the demo
+## 3. Replace the starting screens
 
-The kit arrives with the demo "Family chat" — the reference for every file you are
-about to write; read it before deleting. Delete with full paths, one path per `rm`, no
-globs and no `cd` in the same command:
-
-- `src/spec/model.ts`, `src/spec/world.ts`, `src/spec/rules.ts`, `src/spec/resolvers.ts`,
-  `src/spec/not-shown.ts` (keep `src/spec/index.ts` and `src/spec/docs.ts`);
-- `src/screens/*`, `src/components/*`, `src/lib/initials.ts`;
-- `src/routes/index.tsx`, `src/routes/sign-in.tsx`, `src/routes/sign-up.tsx`,
-  `src/routes/chat` (keep `src/routes/__root.tsx`);
-- `src/graphql/*`, `schema.graphql`, `tests/journeys.spec.ts`.
+The kit arrives with LiteStack's starting prototype, the smallest one that runs: a home
+page (`src/screens/Home.tsx`) and a sign-in page (`src/screens/SignIn.tsx`), tied to
+LiteStack's paragraphs about sign-in (`auth#^…`), a one-person world in `src/spec` and two
+paths in `tests/journeys.spec.ts`. In LiteStack and a product made from it, grow the
+prototype from here. In another project the tags point at paragraphs it does not have
+(DOC401): rewrite those two screens, `src/spec`, `schema.graphql`, `src/graphql/*` and the
+paths for your own documents. A larger reference — sign-up with a code, two people in two
+tabs, a world event — is the "Family chat" demo in the protokit history, last in commit
+`c3d7c9a`.
 
 Keep the kit: `src/kit`, `src/ui`, `src/lib/cn.ts`, `src/main.tsx`, `src/index.css`,
 `scripts/`, `tests/helpers.ts`, `tests/smoke.spec.ts`, configs, `DESIGN.md`.

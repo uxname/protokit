@@ -167,6 +167,8 @@ Short and plain:
 - how to look: `npm run dev` in `prototype/`, whom to sign in as (from «People») and
   which path to walk.
 
-The reference prototype is the protokit demo, "Family chat": sign-in, sign-up with a
-code from the email, two people writing in two tabs, time, network, a world event,
-documentation mode — `prototype/src` and `prototype/tests` of the protokit repository.
+The starting prototype in `prototype/` of the protokit repository is the smallest one
+that runs — a home page and a sign-in page, LiteStack's (a submodule of its meta-repo).
+The patterns of a larger one — sign-up with a code from the email, two people writing in
+two tabs, time, network, a world event — are in the protokit history: the "Family chat"
+demo, last in commit `c3d7c9a`.

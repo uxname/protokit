@@ -1,29 +1,7 @@
-query Dialogs {
-  dialogs {
-    id
-    name
-    lastText
-    lastMine
-    lastAt
-    unread
-  }
-}
 query Me {
   me {
     id
     name
     email
-  }
-}
-query Thread($with: ID!) {
-  person(id: $with) {
-    id
-    name
-  }
-  messages(with: $with) {
-    id
-    text
-    at
-    mine
   }
 }

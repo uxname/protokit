@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Chats } from "@/screens/Chats";
+import { APP_NAME } from "@/components/brand";
+import { Home } from "@/screens/Home";
 
 export const Route = createFileRoute("/")({
-  component: Chats,
-  head: () => ({ meta: [{ title: "Family chat" }] }),
+  component: Home,
+  head: () => ({ meta: [{ title: APP_NAME }] }),
 });

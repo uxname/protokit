@@ -3,5 +3,5 @@ import { SignIn } from "@/screens/SignIn";
 
 export const Route = createFileRoute("/sign-in")({
   component: SignIn,
-  head: () => ({ meta: [{ title: "Sign in — Family chat" }] }),
+  head: () => ({ meta: [{ title: "Sign in — Logto" }] }),
 });

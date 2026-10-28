@@ -1,0 +1,26 @@
+# Git hooks. There is no CI: these hooks are the whole gate (LiteStack meta ADR-0001).
+# The checks read docc.json from the parent folder — the LiteStack meta root — so every
+# command first looks for ../docc.json; a clone of this repository alone has none and
+# skips them (README.md, "Where it runs").
+#
+# Installed by LiteStack's scripts/setup.sh with the meta's own lefthook binary; this
+# repository has no package.json at its root.
+
+pre-commit:
+  commands:
+    docs:
+      # The documents and every docc: tag agree (DOC209, DOC402), and every requirement
+      # paragraph, every screen and every rule file of the prototype is tagged.
+      run: sh -c 'if [ -f ../docc.json ]; then kit=$(pwd); cd .. && docc check --max-warnings 0 && node "$kit/skill/scripts/check-sync.mjs"; fi'
+    check-sync-selftest:
+      glob: "skill/scripts/check-sync*.mjs"
+      run: node skill/scripts/check-sync.test.mjs
+    check:
+      # The docs index, GraphQL types, Biome, TypeScript.
+      run: sh -c 'if [ -f ../docc.json ]; then cd prototype && npm run check; fi'
+
+pre-push:
+  commands:
+    e2e:
+      # The kit's smoke checks and the product's paths in a browser, with screenshots.
+      run: sh -c 'if [ -f ../docc.json ]; then cd prototype && npm run test:e2e; fi'

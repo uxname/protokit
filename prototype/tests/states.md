@@ -5,10 +5,6 @@ shows each of its states. Kept next to the paths; the design critic checks it.
 
 | Screen · element | Loading | Empty | Error | Offline | In progress | Done |
 |---|---|---|---|---|---|---|
-| Sign in · form | — | 01-sign-in | 04-wrong-password | unreachable: signing in needs the network, the form is the same | 04b-signing-in | 05-conversations |
-| Sign up · form | — | 02-sign-up | 03b-wrong-code | unreachable: as sign in | — | 03-code |
-| Sign up · code | — | 03-code | 03b-wrong-code | — | 03-code (countdown) | 03c-resend |
-| Conversations · list | 05b-conversations-loading | unreachable: every family member already has an account | 07b-offline-list | 07b-offline-list | — | 05-conversations |
-| Conversation · messages | 06b-thread-loading | 03d-empty-thread | unreachable: the server refuses reads only for a missing person (08 shows not found) | 07-offline | — | 06-thread, 09-just-sent |
-| Conversation · wrong address | — | — | 08a-conversation-not-found | — | — | — |
-| Any wrong page | — | — | 08-not-found | — | — | — |
+| Home · account controls | unreachable: the home page shows the stranger's controls until the account is known | 01-home-stranger | — | — | — | 03-home-signed-in |
+| Sign in · form | — | 02-sign-in | 02b-wrong-password | unreachable: signing in needs the network, the form is the same | — | 03-home-signed-in |
+| Any wrong page | — | — | 04-not-found | — | — | — |
