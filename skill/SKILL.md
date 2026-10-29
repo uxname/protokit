@@ -38,7 +38,9 @@ Words this skill thinks in:
   theme, reset), «Docs/Требования» (paragraphs of this screen, documentation mode,
   what no screen shows). A project configures it only through `src/spec`.
 - **Documentation mode** — a panel switch: what the documents describe is outlined;
-  hovering an element shows its paragraph and a link to the documents.
+  hovering an element shows a hint with its code and paragraph; a click opens its
+  paragraphs in full in a side at the right edge (the product moves aside), with a copy
+  of the code and links to the documents.
 - **Rule** — a number, condition, text or type from the documents in code, inside a
   **region** `// docc:begin <targets>` … `// docc:end`. docc notices edits of a region
   (DOC402).

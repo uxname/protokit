@@ -91,22 +91,41 @@ test("documentation mode shows the paragraph behind an element", async ({
 
   await docsMode(page, true);
   await page.mouse.move(target.x, target.y);
-  const card = page.getByTestId("docs-card");
-  await expect(card).toContainText(paragraph.slice(0, 40));
+  // Hovering: a small hint with the code, whole on one line, and the paragraph's start.
+  const hint = page.getByTestId("docs-hint");
+  await expect(hint).toContainText(code.toUpperCase());
+  await expect(hint).toContainText(paragraph.slice(0, 20));
+  const chip = hint.getByText(code.toUpperCase(), { exact: true });
+  expect((await chip.boundingBox())?.height ?? 99).toBeLessThan(24);
+  // A click opens the paragraph in full beside the screen and does not act on the product.
+  await page.mouse.click(target.x, target.y);
+  expect(page.url()).toBe(url);
+  const side = page.getByTestId("docs-card");
+  await expect(side).toContainText(paragraph);
   await expect(
-    card.getByRole("link", { name: t.openInDocs }).first(),
+    side.getByRole("link", { name: t.openInDocs }).first(),
   ).toHaveAttribute(
     "href",
     new RegExp(`${doc}--${code.toUpperCase()}@[a-z0-9]{4}$`),
   );
-  await expect(card).toContainText(code.toUpperCase());
-  // A click pins the card and does not act on the product.
-  await page.mouse.click(target.x, target.y);
-  expect(page.url()).toBe(url);
+  await expect(
+    side.getByRole("button", { name: t.copyCode }).first(),
+  ).toHaveText(code.toUpperCase());
+  // The product moves aside on a wide screen: the side covers none of it.
+  const sideBox = await side.boundingBox();
+  const bodyRight = await page.evaluate(
+    () => document.body.getBoundingClientRect().right,
+  );
+  if (sideBox && (page.viewportSize()?.width ?? 0) >= 1040)
+    expect(bodyRight).toBeLessThanOrEqual(sideBox.x + 1);
   await page.mouse.move(1, 1);
-  await expect(card).toContainText(paragraph.slice(0, 40));
+  await expect(side).toContainText(paragraph.slice(0, 40));
+  // Esc closes the side first, then leaves the mode.
   await page.keyboard.press("Escape");
-  await expect(card).toHaveCount(0);
+  await expect(side).toHaveCount(0);
+  await expect(page.locator("[data-req]").first()).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("kbd", { hasText: "Esc" })).toHaveCount(0);
 });
 
 test("the panel lists what no screen shows", async ({ page }) => {

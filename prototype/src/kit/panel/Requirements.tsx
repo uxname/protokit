@@ -40,17 +40,19 @@ export const Requirements: FC = () => {
           <ul className="space-y-2">
             {reqs.map((r) => (
               <li key={r.to} className="rounded-lg border p-3 text-sm">
-                <a
-                  href={r.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium underline-offset-2 hover:underline"
-                >
-                  {r.title}
-                </a>
-                <span className="float-right font-mono text-xs text-muted-foreground">
-                  {r.code}
-                </span>
+                <p className="flex items-baseline gap-2">
+                  <a
+                    href={r.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="min-w-0 font-medium underline-offset-2 hover:underline"
+                  >
+                    {r.title}
+                  </a>
+                  <span className="ml-auto shrink-0 font-mono text-xs whitespace-nowrap text-muted-foreground">
+                    {r.code}
+                  </span>
+                </p>
                 <p className="mt-1 line-clamp-3 text-muted-foreground">
                   {plain(r.text)}
                 </p>

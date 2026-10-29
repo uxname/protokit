@@ -17,8 +17,9 @@ two browser tabs can be two different people talking to each other.
   - **Inbox** — letters and texts the system sent, codes, buttons for outside actions;
   - **World** — move time forward, cut the network, trigger events, switch the theme, reset;
   - **Docs** — the requirements behind this screen, what no screen shows, and
-    **documentation mode**: hover any element to read the paragraph it implements and jump
-    to it.
+    **documentation mode**: hover any element to see the code and the start of the paragraph
+    it implements; click it to read the paragraphs in full in a side at the right edge, copy
+    a code or a link, and jump to the documents.
 - **Synced with the documents** through [docc](https://github.com/uxname/docc), strictly:
   every paragraph has a permanent code (`PAY-14`: the document's key and a number), every file of rules and screens names
   the paragraphs it implements together with the version of each it was checked against,

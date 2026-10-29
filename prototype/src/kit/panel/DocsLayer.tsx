@@ -1,5 +1,12 @@
-import { BookOpen, ExternalLink, X } from "lucide-react";
-import { type FC, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BookOpen, Check, Copy, ExternalLink, X } from "lucide-react";
+import {
+  type FC,
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { create } from "zustand";
 import { type Requirement, requirement } from "../docs";
 import { t } from "../i18n";
@@ -52,12 +59,63 @@ const chainOf = (
   return { el: own, reqs, x, y };
 };
 
-const CARD_W = 320;
+const HINT_W = 360;
+/** The side the read paragraphs stand in; the product moves aside for it on a wide screen. */
+const SIDE_W = 400;
+const WIDE = SIDE_W + 640;
+
+const plain = (text: string) => text.replace(/\*\*/g, "");
+
+/** A button that copies a value and says so for a moment. */
+const CopyButton: FC<{
+  value: () => string;
+  label: string;
+  className?: string;
+  children: ReactNode;
+}> = ({ value, label, className, children }) => {
+  const [done, setDone] = useState(false);
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={() => {
+        void navigator.clipboard?.writeText(value());
+        setDone(true);
+        setTimeout(() => setDone(false), 1500);
+      }}
+      className={`inline-flex items-center gap-1.5 rounded-md outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 ${className ?? ""}`}
+    >
+      {children}
+      {done ? (
+        <Check className="size-3.5 text-primary" />
+      ) : (
+        <Copy className="size-3.5 opacity-60" />
+      )}
+      <span className="sr-only" aria-live="polite">
+        {done ? t.copied : ""}
+      </span>
+    </button>
+  );
+};
+
+/** The requirements grouped by their document, in the order met: a title once per document. */
+const byDocument = (reqs: Requirement[]) => {
+  const groups: { title: string; reqs: Requirement[] }[] = [];
+  for (const r of reqs) {
+    const g = groups.find((x) => x.title === r.title);
+    if (g) g.reqs.push(r);
+    else groups.push({ title: r.title, reqs: [r] });
+  }
+  return groups;
+};
 
 /**
  * While documentation mode is on: every element the documents describe is outlined; the
- * one under the pointer is framed and a card shows its paragraph with a link to the
- * documents. A click pins the card instead of pressing the element; Esc leaves the mode.
+ * one under the pointer is framed and a small hint names its code and paragraph. A click
+ * opens its paragraphs, in full, in a side at the right edge, instead of pressing the
+ * element; on a wide screen the product moves aside for it, so nothing of it is covered.
+ * Esc closes the side, then leaves the mode.
  */
 export const DocsLayer: FC = () => {
   const on = useDocsMode((s) => s.on);
@@ -65,8 +123,10 @@ export const DocsLayer: FC = () => {
   const [hover, setHover] = useState<ReturnType<typeof chainOf>>(null);
   const [pinned, setPinned] = useState<ReturnType<typeof chainOf>>(null);
   const [, redraw] = useState(0);
-  const card = useRef<HTMLDivElement>(null);
-  const [cardH, setCardH] = useState(0);
+  const hint = useRef<HTMLDivElement>(null);
+  const [hintH, setHintH] = useState(0);
+  const pinnedRef = useRef(pinned);
+  pinnedRef.current = pinned;
 
   useEffect(() => {
     if (!on) {
@@ -75,11 +135,13 @@ export const DocsLayer: FC = () => {
       return;
     }
     const move = (e: PointerEvent) => {
-      // Over the card the frame stays where it was, so its link can be reached.
-      if ((e.target as Element | null)?.closest?.(PANEL)) return;
+      if ((e.target as Element | null)?.closest?.(PANEL)) {
+        setHover(null);
+        return;
+      }
       setHover(chainOf(e.clientX, e.clientY));
     };
-    // The product must not react while the tester reads it: presses go to the card instead.
+    // The product must not react while the tester reads it: presses open the side instead.
     const swallow = (e: Event) => {
       if ((e.target as Element | null)?.closest?.(PANEL)) return;
       e.preventDefault();
@@ -91,7 +153,9 @@ export const DocsLayer: FC = () => {
       setPinned(chainOf(e.clientX, e.clientY));
     };
     const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOn(false);
+      if (e.key !== "Escape") return;
+      if (pinnedRef.current) setPinned(null);
+      else setOn(false);
     };
     const follow = () => redraw((n) => n + 1);
     const pressEvents = [
@@ -120,34 +184,43 @@ export const DocsLayer: FC = () => {
     };
   }, [on, setOn]);
 
-  // The card's real height decides where it fits; measured after every change of content.
+  // The hint's real height decides where it fits; measured after every change of content.
   useLayoutEffect(() => {
-    setCardH(card.current?.offsetHeight ?? 0);
+    setHintH(hint.current?.offsetHeight ?? 0);
   });
+  // The product moves aside when the side opens or closes: the frame follows it.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pinned is the trigger
+  useLayoutEffect(() => redraw((n) => n + 1), [pinned]);
 
   if (!on) return null;
-  const shown = pinned ?? hover;
-  const box = shown?.el.getBoundingClientRect();
-  // A tall element (a whole list, a screen) would push the card off it or under it: the
-  // card stands by the pointer instead. Then under the anchor if the card fits, else
-  // above it, else as low as the screen allows; the mode's bar holds the bottom 60 px.
+  const wide = window.innerWidth >= WIDE;
+  const framed = pinned ?? hover;
+  const box = framed?.el.getBoundingClientRect();
+  // The hint stands by the element: under it if it fits, else above it; by the pointer
+  // for a tall element (a whole list, a screen). The mode's bar holds the bottom 60 px.
+  const hb = hover?.el.getBoundingClientRect();
   const anchor =
-    box && shown && box.height > window.innerHeight / 3
-      ? { top: shown.y - 12, bottom: shown.y + 12, left: shown.x - 24 }
-      : box;
+    hb && hover && hb.height > window.innerHeight / 3
+      ? { top: hover.y - 12, bottom: hover.y + 12, left: hover.x - 24 }
+      : hb;
   const floor = window.innerHeight - 60;
-  const top = !anchor
+  const hintTop = !anchor
     ? 0
-    : anchor.bottom + 8 + cardH <= floor
+    : anchor.bottom + 8 + hintH <= floor
       ? anchor.bottom + 8
-      : anchor.top - 8 - cardH >= 8
-        ? anchor.top - 8 - cardH
-        : Math.max(8, floor - cardH);
+      : anchor.top - 8 - hintH >= 8
+        ? anchor.top - 8 - hintH
+        : Math.max(8, floor - hintH);
+  const right = pinned ? (wide ? SIDE_W : 0) : 0;
+  const first = hover?.reqs[0];
+  const showHint =
+    hover && first && hover.el !== pinned?.el && hover.reqs.length > 0;
 
   return (
     <>
       <style>
         {`[data-req]:not(${PANEL} *) { outline: 1.5px dashed color-mix(in oklab, var(--color-primary) 70%, transparent); outline-offset: 2px; }`}
+        {pinned && wide ? `body { margin-right: ${SIDE_W}px; }` : ""}
       </style>
       {box && (
         <div
@@ -161,72 +234,97 @@ export const DocsLayer: FC = () => {
           }}
         />
       )}
-      {shown && box && (
+      {showHint && anchor && (
         <div
-          data-proto-panel
-          ref={card}
-          data-testid="docs-card"
-          role="dialog"
-          aria-label={t.docsMode}
-          className="fixed z-[90] max-h-[calc(100dvh-68px)] w-[min(320px,calc(100vw-1rem))] space-y-3 overflow-y-auto rounded-xl border bg-popover p-4 text-sm text-popover-foreground shadow-2xl"
+          ref={hint}
+          data-testid="docs-hint"
+          aria-hidden="true"
+          className="pointer-events-none fixed z-[90] w-[min(360px,calc(100vw-1rem))] space-y-1 rounded-lg border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-xl"
           style={{
             left: Math.max(
               8,
-              Math.min(anchor?.left ?? 0, window.innerWidth - CARD_W - 8),
+              Math.min(anchor.left, window.innerWidth - right - HINT_W - 8),
             ),
-            top,
+            top: hintTop,
           }}
         >
-          {shown.reqs.map((r, i) => (
-            <div key={r.to} className={i > 0 ? "border-t pt-3" : undefined}>
-              <p
-                className={`flex items-center gap-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase ${pinned && i === 0 ? "pr-6" : ""}`}
-              >
-                <BookOpen className="size-3.5" /> {r.title}
-                <span className="ml-auto font-mono tracking-normal">
-                  {r.code}
-                </span>
-              </p>
-              {/* Hovering previews; a pinned card reads in full. */}
-              <p
-                className={
-                  i > 0
-                    ? "mt-1 line-clamp-2 text-muted-foreground"
-                    : pinned
-                      ? "mt-1.5"
-                      : "mt-1.5 line-clamp-5"
-                }
-              >
-                {r.text.replace(/\*\*/g, "")}
-              </p>
-              <a
-                href={r.href}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-primary underline-offset-2 hover:underline"
-              >
-                {t.openInDocs} <ExternalLink className="size-3" />
-              </a>
-            </div>
-          ))}
-          {!pinned && (
-            <p className="text-xs text-muted-foreground">{t.pinHint}</p>
-          )}
-          {pinned && (
+          <p className="flex items-baseline gap-2">
+            <span className="shrink-0 rounded bg-muted px-1.5 font-mono text-xs whitespace-nowrap">
+              {first.code}
+            </span>
+            <span className="min-w-0 truncate text-xs text-muted-foreground">
+              {first.title}
+            </span>
+          </p>
+          <p className="line-clamp-2">{plain(first.text)}</p>
+          <p className="text-xs text-muted-foreground">
+            {hover.reqs.length > 1 && `${t.more(hover.reqs.length - 1)} · `}
+            {t.pinHint}
+          </p>
+        </div>
+      )}
+      {pinned && (
+        <aside
+          data-proto-panel
+          data-testid="docs-card"
+          aria-label={t.docsTitle}
+          className="fixed inset-y-0 right-0 z-[90] flex w-[min(400px,100vw)] flex-col border-l bg-popover text-sm text-popover-foreground shadow-2xl"
+        >
+          <header className="flex items-center gap-2 border-b px-4 py-3">
+            <BookOpen className="size-4 text-primary" />
+            <h2 className="font-semibold">{t.docsTitle}</h2>
             <button
               type="button"
-              aria-label={t.cancel}
+              aria-label={t.close}
+              title={`${t.close} · Esc`}
               onClick={() => setPinned(null)}
-              className="absolute top-2 right-2 rounded-md p-1 text-muted-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="ml-auto rounded-md p-1.5 text-muted-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
-              <X className="size-3.5" />
+              <X className="size-4" />
             </button>
-          )}
-        </div>
+          </header>
+          <div className="flex-1 space-y-6 overflow-y-auto p-4 pb-20">
+            {byDocument(pinned.reqs).map((g) => (
+              <section key={g.title} className="space-y-3">
+                <h3 className="font-semibold leading-snug">{g.title}</h3>
+                {g.reqs.map((r) => (
+                  <div key={r.to} className="space-y-2 rounded-lg border p-3">
+                    <CopyButton
+                      label={t.copyCode}
+                      value={() => r.code}
+                      className="-ml-0.5 bg-muted px-1.5 py-0.5 font-mono text-xs font-medium whitespace-nowrap"
+                    >
+                      {r.code}
+                    </CopyButton>
+                    <p className="leading-relaxed">{plain(r.text)}</p>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                      <a
+                        href={r.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 font-medium text-primary underline-offset-2 hover:underline"
+                      >
+                        {t.openInDocs} <ExternalLink className="size-3" />
+                      </a>
+                      <CopyButton
+                        label={t.copyLink}
+                        value={() => new URL(r.href, window.location.href).href}
+                        className="px-1 py-0.5 text-muted-foreground"
+                      >
+                        {t.copyLink}
+                      </CopyButton>
+                    </div>
+                  </div>
+                ))}
+              </section>
+            ))}
+          </div>
+        </aside>
       )}
       <div
         data-proto-panel
-        className="fixed bottom-4 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2 rounded-full border bg-popover py-1.5 pr-1.5 pl-3 text-xs text-popover-foreground shadow-lg"
+        className="fixed bottom-4 z-[90] flex -translate-x-1/2 items-center gap-2 rounded-full border bg-popover py-1.5 pr-1.5 pl-3 text-xs text-popover-foreground shadow-lg"
+        style={{ left: `calc((100vw - ${right}px) / 2)` }}
       >
         <BookOpen className="size-3.5 text-primary" />
         <span className="whitespace-nowrap">{t.docsTitle}</span>
