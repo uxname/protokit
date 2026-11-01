@@ -5,6 +5,8 @@
     "includes": ["**", "!**/src/generated", "!src/index.css"]
   },
   "formatter": { "enabled": true, "indentStyle": "space", "lineEnding": "lf" },
+  "markdown": { "formatter": { "enabled": false } },
+  "yaml": { "formatter": { "enabled": false } },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,

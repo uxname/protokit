@@ -36,8 +36,8 @@ two browser tabs can be two different people talking to each other.
 protokit is the prototype of [LiteStack](https://github.com/uxname/LiteStack), a
 submodule of its meta-repo: the documents are LiteStack's `docs/src`, the prototype is
 `prototype/` here. Its checks read `docc.json` from a parent folder, so a clone of this
-repository alone does not pass them — work in a LiteStack clone. You need Node.js 22+ and
-[docc](https://github.com/uxname/docc) 0.7.0+:
+repository alone does not pass them — work in a LiteStack clone. You need Node.js 26.12.1+ and
+[docc](https://github.com/uxname/docc) 0.9.0+:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/uxname/docc/main/install.sh | sh

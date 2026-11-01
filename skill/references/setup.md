@@ -5,7 +5,7 @@ can check.
 
 ## 1. Tools
 
-- Node.js 22+ and `docc` 0.7.0+ on `PATH` (`docc --version`; older: `docc update`). No docc:
+- Node.js 26.12.1+ and `docc` 0.9.0+ on `PATH` (`docc --version`; older: `docc update`). No docc:
   `curl -fsSL https://raw.githubusercontent.com/uxname/docc/main/install.sh | sh`
   (Windows: `irm https://raw.githubusercontent.com/uxname/docc/main/install.ps1 | iex`).
 - `docc.json` has `"lang"` — the documents' language. The panel speaks it (`ru`
