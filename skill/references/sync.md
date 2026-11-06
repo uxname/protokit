@@ -5,17 +5,12 @@ having read **both** sides: the paragraph and the code.
 
 ## How a link knows the other side changed
 
-Every block of the documents ends in a permanent code (` ^AUTH-3`: the document's `key` and
-a number, given by `docc build`; never write, change or move one by hand). Every link
-carries the hash of the version it was checked against: `// docc: auth#^AUTH-3@3a9c` in
-code, `[[auth#^AUTH-3@3a9c]]` or
-`[[auth@9b1e]]` (a whole document) in the documents. A tag line ends in the print of its
-file (`~e91d`), a `docc:begin` line in the print of its region. docc compares them with
-what stands now; a difference fails `docc check`, and with it the commit.
-
-There is no command that confirms links: each stale hash is rewritten by hand, in its
-own place, after reading what changed. docc's message shows the change and the new
-hash — it is not a value to paste without reading.
+Block codes, hashes in links, tags, regions and prints are docc's mechanism; their
+format and rules are the `docc` skill's ("Block codes", "Version hashes", "Code tags").
+The one rule that matters most here: each stale hash or print is rewritten by hand, in
+its own place, after reading what changed — never pasted from docc's message unread. A
+difference fails `docc check`, and with it the commit. This file says only what each
+signal means for a prototype.
 
 ## What each signal means
 
@@ -25,8 +20,7 @@ hash — it is not a value to paste without reading.
 | DOC209 on a `docs/src/…` file | a block or document this link points at changed | read the linking paragraph against the change; it repeats the old value — fix it; then write the new hash into the link |
 | DOC402 on a `prototype/…` file | code of the file (outside regions) or of a region changed | read the edit (`git diff`); check every target of that tag or region against the code — rewrite a paragraph so it says what the code does (numbers, conditions, order); then write the new print docc names |
 | DOC209 and DOC402 on one pair | both sides changed | see "Both sides changed" |
-| DOC212 | one code on two blocks (a copied paragraph) | keep the code on the original, remove it from the copy; `docc build` gives the copy its own |
-| DOC216 | a block without a code | `docc build` |
+| DOC212, DOC216 | a block code problem in the documents | by the `docc` skill |
 | DOC401 | a tag points at a document or code that does not exist | the block was deleted — remove the tag and what it required, or ask the user; codes never change, so there is nothing to rename |
 | DOC404 | a requirement block without a tag: a new paragraph, or this change removed its last tag | show it on a screen (rule + `Req` + tag) or add it to `not-shown.ts` with the reason; where the product carries tags too, a tag there covers it |
 | `check-sync`: file without a tag | a file of `src/spec` or `src/screens` names no paragraph | add the `// docc:` line with the paragraphs it implements; a file with nothing of the documents (an index, the seed data, a wrong-address page) says why on `// docc-none: <reason>` |

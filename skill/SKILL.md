@@ -44,15 +44,12 @@ Words this skill thinks in:
 - **Rule** — a number, condition, text or type from the documents in code, inside a
   **region** `// docc:begin <targets>` … `// docc:end`. docc notices edits of a region
   (DOC402).
-- **Code** — the permanent name of a block of the documents, ` ^PAY-14` at its end: the
-  document's `key` and a number, given by `docc build`. Agents never write, change or move
-  codes or keys; people read them in the readers and the panel and use them to point at a
-  paragraph.
+- **Code** — the permanent name of a block of the documents, ` ^PAY-14` at its end. People
+  read it in the readers and the panel and use it to point at a paragraph. Its rules are
+  the `docc` skill's.
 - **Tag** — `// docc: <id>#^<code>@<hash>, … ~<print>` on the first line of a file: the
-  file implements those paragraphs. The hash is the version of the paragraph the file was
-  checked against, the print the version of the file itself. A change of either side
-  fails `docc check` (DOC209, DOC402) until the agent has read it and written the new
-  hash by hand, in that place.
+  file implements those paragraphs. Hashes and prints follow the `docc` skill ("Code
+  tags"); a stale one fails `docc check` (DOC209, DOC402).
 - **Req** — `<Req to="<id>#^<code>">element</Req>` around what shows a paragraph.
   Invisible in the product; documentation mode reads it. A `Req` around the whole
   screen links the screen. The file with a `Req` carries the tag of the same target.
