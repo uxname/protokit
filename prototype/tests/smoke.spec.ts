@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import index from "../src/generated/doc-index.json" with { type: "json" };
 import { t } from "../src/kit/i18n";
+import { DB_VERSION } from "../src/spec/model";
 import { NOT_SHOWN } from "../src/spec/not-shown";
 import { people, seed } from "../src/spec/world";
 import { actAs, docsMode, expectReqs, go, panel, panelDialog } from "./helpers";
@@ -8,8 +9,9 @@ import { actAs, docsMode, expectReqs, go, panel, panelDialog } from "./helpers";
 /**
  * The checks every prototype passes, whatever the product: a stranger gets a screen, each
  * seeded person gets theirs, every requirement mark names a real paragraph, every anchor
- * exists in docs.html, and the panel works — documentation mode, «Not on any screen»,
- * theme. The product's own journeys live in journeys.spec.ts.
+ * exists in docs.html, the panel works — documentation mode, «Not on any screen»,
+ * theme — and a world saved by an older `Db` gives way to a fresh one. The product's own
+ * journeys live in journeys.spec.ts.
  */
 
 const pages: Record<
@@ -190,4 +192,27 @@ test("the panel and its tab are dragged out of the way and stay there", async ({
   expect(
     Math.round((await panelDialog(page).boundingBox())?.y ?? 0),
   ).toBeLessThan(80);
+});
+
+test("a world saved by an older shape of Db is replaced by a fresh one", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await go(page, "/");
+  // What an older prototype left in the browser: another version, a db without today's fields.
+  await page.evaluate((version) => {
+    localStorage.setItem(
+      "proto-world",
+      JSON.stringify({ version, state: { db: {}, online: true, inbox: [] } }),
+    );
+  }, DB_VERSION - 1);
+  await page.reload();
+  await expect(page.locator("main, form, h1").first()).toBeVisible();
+  const saved = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("proto-world") ?? "{}"),
+  );
+  expect(saved.version).toBe(DB_VERSION);
+  expect(Object.keys(saved.state.db)).toEqual(Object.keys(seed()));
+  expect(errors).toEqual([]);
 });

@@ -14,6 +14,11 @@ const Toaster = ({ ...props }: ToasterProps) => (
   <Sonner
     className="toaster group"
     position="top-center"
+    // A toast the product sends to the bottom (`position: "bottom-center"`) rises over what
+    // a phone keeps fixed there: the product sets `--fixed-bottom-height` on `:root` at its
+    // phone widths (DESIGN.md, Layout). Sonner takes its phone offset only under 600 px: both.
+    offset={{ bottom: "calc(24px + var(--fixed-bottom-height, 0px))" }}
+    mobileOffset={{ bottom: "calc(16px + var(--fixed-bottom-height, 0px))" }}
     icons={{
       success: <CircleCheckIcon className="size-4 text-success" />,
       info: <InfoIcon className="size-4 text-info" />,

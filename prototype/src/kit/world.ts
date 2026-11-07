@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { type Db, seed } from "@/spec";
+import { DB_VERSION, type Db, seed } from "@/spec";
 import { now } from "./clock";
 import type { Mail } from "./types";
 
@@ -18,6 +18,8 @@ interface WorldStore {
 
 const id = () => Math.random().toString(36).slice(2, 10);
 
+const fresh = () => ({ db: seed(), online: true, inbox: [] as Mail[] });
+
 /**
  * One simulated server and the outside world, shared by every tab through localStorage.
  * Every change makes a new `db` object; the GraphQL client is rebuilt on it, so queries refetch.
@@ -25,9 +27,7 @@ const id = () => Math.random().toString(36).slice(2, 10);
 export const useWorld = create<WorldStore>()(
   persist(
     (set) => ({
-      db: seed(),
-      online: true,
-      inbox: [],
+      ...fresh(),
       update: (fn) =>
         set((s) => {
           const db = structuredClone(s.db);
@@ -45,9 +45,15 @@ export const useWorld = create<WorldStore>()(
           ),
         })),
       setOnline: (online) => set({ online }),
-      reset: () => set({ db: seed(), online: true, inbox: [] }),
+      reset: () => set(fresh()),
     }),
-    { name: "proto-world" },
+    {
+      name: "proto-world",
+      // A world saved by an older shape of `Db` would reach screens without the new
+      // fields; a fresh seed replaces it. The number is the product's, next to `Db`.
+      version: DB_VERSION,
+      migrate: fresh,
+    },
   ),
 );
 

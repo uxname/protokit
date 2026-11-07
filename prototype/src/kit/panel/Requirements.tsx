@@ -63,7 +63,7 @@ export const Requirements: FC = () => {
       </Section>
 
       <details className="group space-y-2">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50">
+        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase outline-none focus-visible:ring-[3px] focus-visible:ring-ring">
           <ChevronRight className="size-3.5 transition-transform group-open:rotate-90" />
           {t.notShownTitle} · {NOT_SHOWN.length}
         </summary>

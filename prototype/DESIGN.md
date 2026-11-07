@@ -75,7 +75,9 @@ Radii stay the same in both themes.
 - Anything that can overflow — a name, an email, a long title — gets `truncate`
   and `min-w-0` on its flex parent.
 - Toasts are top-centre (the kit mounts them): at the bottom they cover a phone's
-  navigation.
+  navigation. A product that sends them to the bottom (`position: "bottom-center"`)
+  sets `--fixed-bottom-height` on `:root` at its phone widths — the height of what is
+  fixed there (the tab bar, a floating button) — and the kit's toaster rises over it.
 
 ## States — every list and every request
 
@@ -100,7 +102,8 @@ deadline state — so every rule appears on some screenshot.
 
 ## Accessibility
 
-- Visible focus everywhere: `outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50` (the primitives have it).
+- Visible focus everywhere: `outline-none focus-visible:ring-[3px] focus-visible:ring-ring` (the primitives have it). Solid, not `ring-ring/50`: at half strength the ring falls under the 3:1 contrast WCAG 2.2 AA asks of a focus mark.
+- Menu items are 44 px tall on a touch screen (`pointer-coarse:min-h-11`, in the primitive): a finger needs the room a mouse does not.
 - A skip link to `#content`; one `<main>`; one `<h1>` per screen, no skipped levels.
 - Every icon-only control has an `aria-label`; `aria-label` only on elements with a role (on a `span`, use `sr-only` text).
 - Anything clickable is a `<button>` or a link.

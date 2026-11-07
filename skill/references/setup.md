@@ -41,7 +41,7 @@ Keep the kit: `src/kit`, `src/ui`, `src/lib/cn.ts`, `src/main.tsx`, `src/index.c
 
 | File | Exports |
 |---|---|
-| `model.ts` | `Db` — everything the server holds; `Ctx = ProtoCtx<Db>` (`import type` from `@/kit`) |
+| `model.ts` | `Db` — everything the server holds; `DB_VERSION` — raise it whenever `Db` changes shape (a field added, renamed, retyped): a world a browser saved by the older shape is replaced by a fresh `seed()`, not shown half-empty; `Ctx = ProtoCtx<Db>` (`import type` from `@/kit`) |
 | `world.ts` | `seed(): Db` — the starting world; `people(db): Person[]` — whom «People» lists (`note`: email, password, whatever the person holds — a line per item); `EVENTS: Record<id, ProtoEvent<Db>>` — world events |
 | `resolvers.ts` | `resolvers` — root fields of `Query` and `Mutation`; sign-in returns `ctx.tokenFor(id)` |
 | `rules.ts` | the documents' rules; among them `OFFLINE_READS` — which reads answer offline: `true` all (the documents promise reading offline: the app keeps a local copy), `false` none (only what is loaded stays), or `(operation) => boolean` when some reads need the server (checking an invitation code, say) |

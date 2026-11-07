@@ -17,7 +17,7 @@ export const AppShell: FC<{ actions?: ReactNode; children: ReactNode }> = ({
     <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
       <Link
         to="/"
-        className="flex items-center gap-2 rounded-md font-semibold outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        className="flex items-center gap-2 rounded-md font-semibold outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
       >
         <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           L

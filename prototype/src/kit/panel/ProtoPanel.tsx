@@ -217,7 +217,7 @@ export const ProtoPanel: FC = () => {
                   aria-pressed={tab === id}
                   onClick={() => setTab(id)}
                   className={cn(
-                    "relative rounded-md px-1 py-1.5 text-xs font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                    "relative rounded-md px-1 py-1.5 text-xs font-medium transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
                     tab === id
                       ? "bg-accent text-foreground"
                       : "text-muted-foreground hover:text-foreground",
@@ -253,7 +253,7 @@ export const ProtoPanel: FC = () => {
             }}
             title={t.openPanel(name)}
             className={cn(
-              "flex cursor-grab touch-none flex-col items-center gap-1 border bg-popover py-2 pr-1.5 pl-1 shadow-lg transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 active:cursor-grabbing",
+              "flex cursor-grab touch-none flex-col items-center gap-1 border bg-popover py-2 pr-1.5 pl-1 shadow-lg transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring active:cursor-grabbing",
               free
                 ? "rounded-xl"
                 : place.side === "left"

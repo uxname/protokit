@@ -133,7 +133,7 @@ export const World: FC = () => {
               aria-pressed={theme === id}
               onClick={() => setTheme(id)}
               className={cn(
-                "flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                "flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
                 theme === id
                   ? "bg-accent text-foreground"
                   : "text-muted-foreground hover:text-foreground",

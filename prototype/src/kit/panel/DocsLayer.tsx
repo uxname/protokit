@@ -84,7 +84,7 @@ const CopyButton: FC<{
         setDone(true);
         setTimeout(() => setDone(false), 1500);
       }}
-      className={`inline-flex items-center gap-1.5 rounded-md outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 ${className ?? ""}`}
+      className={`inline-flex items-center gap-1.5 rounded-md outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring ${className ?? ""}`}
     >
       {children}
       {done ? (
@@ -278,7 +278,7 @@ export const DocsLayer: FC = () => {
               aria-label={t.close}
               title={`${t.close} · Esc`}
               onClick={() => setPinned(null)}
-              className="ml-auto rounded-md p-1.5 text-muted-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="ml-auto rounded-md p-1.5 text-muted-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring"
             >
               <X className="size-4" />
             </button>
@@ -333,7 +333,7 @@ export const DocsLayer: FC = () => {
           type="button"
           aria-label={t.cancel}
           onClick={() => setOn(false)}
-          className="rounded-full p-1 outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="rounded-full p-1 outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring"
         >
           <X className="size-3.5" />
         </button>

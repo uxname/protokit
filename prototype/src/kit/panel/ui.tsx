@@ -30,7 +30,7 @@ export const Row: FC<{
     onClick={onClick}
     aria-pressed={active}
     className={cn(
-      "flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50",
+      "flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left text-sm transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring",
       active ? "border-primary bg-primary/5" : "border-transparent",
       className,
     )}

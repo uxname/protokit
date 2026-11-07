@@ -62,7 +62,8 @@ first screen, every screen of the main tasks, every error and empty state on the
 paths, offline, and one loading state: `slowServer(page, 10_000)`, act, `shot`,
 `slowServer(page, null)`. A state no path can reach (an error the world never
 produces) is not invented for the shot: it goes to the critic's "Accepted decisions"
-with the reason, and the code for it stays.
+with the reason, and the code for it stays. `shot` takes 390 and 1280 only: the narrow
+320 is a test's — the paths check that every main screen does not scroll sideways at 320.
 
 **The state table.** Before the critic, write `tests/states.md` (committed next to the paths): one row per list or
 request on each screen, one column per state that applies to it — loading, empty,
@@ -94,9 +95,15 @@ Visual readiness is accepted by someone who did not build it. Start a separate a
 > shown but not on its screenshot, or a cell left empty, is a blocker. Return blockers (screenshot, what is wrong, how to fix), minor
 > notes and questions to the documents. Change nothing.
 
+More screenshots than one critic can open (hundreds): split them into groups by
+screen (the `<nn>-<screen>` names; neighbouring screens in one group, so their shared
+elements are compared), one critic per group, each with its screens' rows of the state
+table. Done when every group is at 0 blockers.
+
 Fix the blockers, shoot again and hand the new screenshots to **the same** critic
 (continue its conversation, do not start a new one): it remembers what it accepted and
-looks only at what changed. A new agent every round finds new "blockers" in what was
-accepted and costs a full review each time. A note you reject on purpose goes to
+looks only at what changed — hand it only the changed screenshots of its group. A new
+agent every round finds new "blockers" in what was accepted and costs a full review each
+time. A note you reject on purpose goes to
 "Accepted decisions" with the reason. Done at 0 blockers. Fix minor notes when cheap;
 questions to the documents go to the report.
