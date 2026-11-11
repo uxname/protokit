@@ -29,7 +29,9 @@ signal means for a prototype.
 | DOC403 | a document of a kind with `x-docc-covered` has no tag at all | as DOC404 |
 
 A new tag or a new target in one is written without a hash (`// docc: auth#^AUTH-3`):
-docc's DOC209 then names the hash to write after you read the block.
+docc's DOC209 then names the hash to write after you read the block. A new tag is written
+without a print too — no placeholder such as `~0000`, which docc reads as a broken target
+(DOC401): DOC402 names the print to write after you check the code against the targets.
 
 ## The old value elsewhere
 
