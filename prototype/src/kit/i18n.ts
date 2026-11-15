@@ -2,7 +2,8 @@ import index from "../generated/doc-index.json" with { type: "json" };
 
 /**
  * The panel speaks the language of the project documents (`lang` in docc.json): Russian
- * for "ru", English otherwise. Tests read the same strings, so they find the same buttons.
+ * for "ru", English otherwise; so do the template's frame and 404 page. Tests read the same
+ * strings, so they find the same buttons.
  */
 const en = {
   locale: "en-US",
@@ -74,6 +75,12 @@ const en = {
   crashTitle: "Something went wrong",
   crashText: "Reload the page — your data stays where it was.",
   reload: "Reload",
+  // The starting frame and 404 of the product (src/components, src/screens) speak it too.
+  skipToContent: "Skip to content",
+  notFoundTitle: "Page not found",
+  notFoundText:
+    "There is no page at this address. The rest is on the home page.",
+  backHome: "Back to home",
 };
 
 const ru: typeof en = {
@@ -146,6 +153,10 @@ const ru: typeof en = {
   crashTitle: "Что-то пошло не так",
   crashText: "Обновите страницу — данные останутся на месте.",
   reload: "Обновить",
+  skipToContent: "Перейти к содержимому",
+  notFoundTitle: "Такой страницы нет",
+  notFoundText: "По этому адресу ничего нет. Всё остальное — на главной.",
+  backHome: "На главную",
 };
 
 export const lang: "en" | "ru" = index.lang === "ru" ? "ru" : "en";

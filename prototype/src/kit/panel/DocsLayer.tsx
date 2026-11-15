@@ -53,8 +53,10 @@ const chainOf = (
     at;
     at = at.parentElement?.closest("[data-req]") ?? null
   ) {
-    const r = requirement(at.getAttribute("data-req") ?? "");
-    if (r && !reqs.some((x) => x.to === r.to)) reqs.push(r);
+    for (const to of (at.getAttribute("data-req") ?? "").split(",")) {
+      const r = requirement(to.trim());
+      if (r && !reqs.some((x) => x.to === r.to)) reqs.push(r);
+    }
   }
   return { el: own, reqs, x, y };
 };

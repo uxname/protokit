@@ -8,7 +8,8 @@ import { actAs, docsMode, expectReqs, go, panel, panelDialog } from "./helpers";
 
 /**
  * The checks every prototype passes, whatever the product: a stranger gets a screen, each
- * seeded person gets theirs, every requirement mark names a real paragraph, every anchor
+ * seeded person gets theirs (a product without sign-in lists nobody, and the panel has no
+ * «People»), the skip button, every requirement mark names a real paragraph, every anchor
  * exists in docs.html, the panel works — documentation mode, «Not on any screen»,
  * theme — and a world saved by an older `Db` gives way to a fresh one. The product's own
  * journeys live in journeys.spec.ts.
@@ -26,7 +27,33 @@ test("a stranger opens the prototype", async ({ page }) => {
   await expect(page.getByTestId("proto-panel-open")).toContainText(t.stranger);
   await expect(page.locator("main, form, h1").first()).toBeVisible();
   await expectReqs(page);
+  if (people(seed()).length === 0) {
+    await panel(page, "world");
+    await expect(
+      panelDialog(page).getByRole("button", { name: t.tabs.people }),
+    ).toHaveCount(0);
+  }
   expect(errors).toEqual([]);
+});
+
+test("the skip button moves focus to the content and keeps the address", async ({
+  page,
+}) => {
+  await go(page, "/");
+  await expect(page.locator("main").first()).toBeVisible();
+  const skip = page.getByRole("button", { name: t.skipToContent });
+  // A frame of the product's own without the kit's skip button: nothing to check.
+  test.skip((await skip.count()) === 0, "the frame has no skip button");
+  const url = page.url();
+  await page.keyboard.press("Tab");
+  await expect(skip).toBeFocused();
+  // WCAG 2.2 AA, target size: at least 24 px.
+  const box = await skip.boundingBox();
+  expect(box?.height ?? 0).toBeGreaterThanOrEqual(24);
+  expect(box?.width ?? 0).toBeGreaterThanOrEqual(24);
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#content")).toBeFocused();
+  expect(page.url()).toBe(url);
 });
 
 for (const person of people(seed())) {
@@ -55,9 +82,15 @@ test("every block code opens its block in docs.html", async ({ page }) => {
   expect(links.length).toBeGreaterThan(0);
   // docs.html draws its pages with a script, so the blocks exist only after it runs.
   for (const { code, hash } of links) {
+    // a hash-only goto does not reload, and the reader ignores the old hash then
+    await page.goto("about:blank");
     await page.goto(`/docs.html#${hash}`);
     await expect(
-      page.locator(".code").getByText(code, { exact: true }),
+      // a block code carries data-code (docc_spec); .code is the old docc page
+      page
+        .locator(`[data-code="${code}"], .code`)
+        .filter({ hasText: code })
+        .first(),
       hash,
     ).toBeAttached();
   }
@@ -67,7 +100,8 @@ test("documentation mode shows the paragraph behind an element", async ({
   page,
 }) => {
   await go(page, "/");
-  await actAs(page, people(seed())[0].name);
+  const first = people(seed())[0];
+  if (first) await actAs(page, first.name);
   await go(page, "/");
   await expect(page.locator("[data-req]").first()).toBeVisible();
   // An element whose middle belongs to it, not to a Req inside it.
@@ -84,7 +118,8 @@ test("documentation mode shows the paragraph behind an element", async ({
   });
   expect(target, "a screen with a <Req> element").not.toBeNull();
   if (!target) return;
-  const [doc, code] = target.to.split("#^");
+  // One Req may name several paragraphs: the first is checked.
+  const [doc, code] = target.to.split(",")[0].trim().split("#^");
   const paragraph = pages[doc].anchors[code.toUpperCase()].text.replace(
     /\*\*/g,
     "",

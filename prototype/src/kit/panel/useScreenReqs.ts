@@ -9,7 +9,8 @@ export const useScreenReqs = (): string[] => {
         ...new Set(
           [...document.querySelectorAll<HTMLElement>("[data-req]")]
             .filter((el) => !el.closest("[data-proto-panel]"))
-            .map((el) => el.dataset.req ?? ""),
+            .flatMap((el) => (el.dataset.req ?? "").split(","))
+            .map((to) => to.trim()),
         ),
       ].filter(Boolean);
       setTargets((prev) => (prev.join() === next.join() ? prev : next));

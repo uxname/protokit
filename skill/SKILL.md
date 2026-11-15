@@ -26,10 +26,12 @@ Words this skill thinks in:
 
 - **World** — everything off screen: the server's data (seeded people with history),
   email and texts, time, network. One world for all tabs (`localStorage`); a change in
-  one tab shows in the others.
+  one tab shows in the others. In a product without a server the world is the
+  browser's own storage (see the rules).
 - **Tab-person** — each tab has its own fake token. The server knows the person by the
   `Authorization` header, as a real one does. The token comes from sign-in or from the
-  panel («People»).
+  panel («People»). A product without sign-in has nobody to list: `people()` returns
+  `[]`, the panel shows no «People», and every tab is the device's owner.
 - **Path** — a sequence of a person's actions from the documents: from the first screen
   without an account to the goal. Every state is reached by a path: an action or a
   world event. Nothing is switched by force.
@@ -50,9 +52,10 @@ Words this skill thinks in:
 - **Tag** — `// docc: <id>#^<code>@<hash>, … ~<print>` on the first line of a file: the
   file implements those paragraphs. Hashes and prints follow the `docc` skill ("Code
   tags"); a stale one fails `docc check` (DOC209, DOC402).
-- **Req** — `<Req to="<id>#^<code>">element</Req>` around what shows a paragraph.
+- **Req** — `<Req to="<id>#^<code>">element</Req>` around what shows a paragraph; an
+  element that shows several names them all in one: `to="i1#^I1-2, i1#^I1-5"`.
   Invisible in the product; documentation mode reads it. A `Req` around the whole
-  screen links the screen. The file with a `Req` carries the tag of the same target.
+  screen links the screen. The file with a `Req` carries the tag of each of its targets.
 
 The prototype and the documents are **equal**: an edit on either side reaches the
 other. People only read both; the links between them are the agent's routine, and docc
@@ -92,7 +95,8 @@ or print: read the change, bring the other side in line, write the new value by 
    - **the quality bar** below, with the critic at 0 blockers;
    - walk the panel yourself on `npm run dev`, in a browser or with a short Playwright
      script in a temporary folder outside `prototype/`: «People» in two tabs, a letter
-     with a code, moving time, the network, documentation mode.
+     with a code, moving time, the network, documentation mode — whichever of them the
+     product has.
 8. **Publish.** Documents in Docspace — commit, push to the draft branch and `publish`
    with a message saying what changed in documents and prototype. Otherwise commit
    only when asked. Never bypass the `docc check` hook.
@@ -104,7 +108,16 @@ or print: read the change, bring the other side in line, write the new value by 
   everything technical in the panel.
 - **The path starts without an account.** `/` without a token leads to the stranger's
   first screen from the documents: sign-in, invitation, landing. Protected screens are
-  wrapped in a sign-in check.
+  wrapped in a sign-in check. A product without sign-in (the documents have no
+  accounts) opens straight on its first screen; the header has no person's menu, the
+  seed may be empty (a first open that shows 0 is the documents' first screen).
+- **A product without a server** (the documents keep the data on the device: no
+  accounts, no sync) has no simulated server: delete `schema.graphql`, `src/graphql/`,
+  `src/spec/resolvers.ts` and `OFFLINE_READS` — the kit needs none of them. Screens read
+  the world with `useWorld((s) => s.db)` and write it with
+  `useWorld((s) => s.update)(rule)`, a rule from `src/spec`: that is the browser's
+  storage, it outlives a reload, and the network switch does not touch it, as on a real
+  device. Not a bypass of the server — there is none to bypass.
 - **A state is a consequence.** Login errors come from a wrong password, a deadline
   passes by moving time, "offline" is the switch in «World», a letter comes from the
   server. What a person cannot do in the interface (confirm an email, approve a
@@ -120,7 +133,8 @@ or print: read the change, bring the other side in line, write the new value by 
 - **Every rule and screen file carries a tag.** The first line of each file of
   `src/spec` and `src/screens` is `// docc: <targets>`; a file with nothing of the
   documents (an index, the seed data, a wrong-address page) says why on
-  `// docc-none: <reason>`. In a screen an element showing a paragraph is wrapped in `<Req to="…">`
+  `// docc-none: <reason>`. A paragraph's tag stands in one place: a rules file whose
+  rules all sit in regions has no first-line tag — its regions are its tags. In a screen an element showing a paragraph is wrapped in `<Req to="…">`
   with a literal `to`. The only child of `Req` passes props to its DOM element (DOM
   tags and shadcn primitives do).
 - **A tag is a `//` line.** docc silently skips `{/* docc: … */}` in JSX.
@@ -141,12 +155,16 @@ product.** Visual quality is half of the prototype's value, not a finish.
   copy. Read it before the first screen.
 - Screenshots: every meaningful step of a path calls `shot(page, "<nn>-<screen>")` —
   390×844 and 1280×800, light and dark. At least: the first screen, every screen of
-  the main tasks, every error and empty state on the paths, one loading state, offline.
-- State table: `tests/states.md` maps every list and request of every screen to the shot of
-  each of its states, or says why a state is unreachable.
+  the main tasks, every error and empty state on the paths; when the product asks a
+  server, also one loading state and offline.
+- State table: `tests/states.md` maps every list and server request of every screen to
+  the shot of each of its states, or says why a state is unreachable. Loading, error
+  and offline belong to a request to the server only: what a screen reads from the
+  browser's storage has none of them — `—` in those cells, no reason needed.
 - **Critic.** Visual readiness is accepted by someone who did not build it: a separate
   agent by [references/design.md](references/design.md). Done at 0 blockers. A small
-  visual edit also goes through screenshots.
+  visual edit also goes through screenshots. Which of its remarks are questions to the
+  documents and which are fixed in the prototype — "The critic's remarks" there.
 
 ## Talking to the user
 
@@ -164,8 +182,8 @@ Short and plain:
 - what was decided where both sides changed, and why;
 - the checks with numbers: blocks covered N of N, paths N, screenshots N, critic
   blockers 0;
-- how to look: `npm run dev` in `prototype/`, whom to sign in as (from «People») and
-  which path to walk.
+- how to look: `npm run dev` in `prototype/`, whom to sign in as (from «People»;
+  nobody in a product without sign-in) and which path to walk.
 
 The starting prototype in `prototype/` of the protokit repository is the smallest one
 that runs — a home page and a sign-in page, LiteStack's (a submodule of its meta-repo).

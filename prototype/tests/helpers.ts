@@ -70,9 +70,9 @@ export const lastCode = async (page: Page): Promise<string> => {
   const code = await panelDialog(page)
     .locator(".font-mono")
     .first()
-    .innerText();
+    .textContent();
   await closePanel(page);
-  return code.trim();
+  return (code ?? "").trim();
 };
 
 const STEPS = { hour: 0, day: 1, week: 2, month: 3, halfYear: 4 } as const;
@@ -113,12 +113,14 @@ export const docsMode = async (page: Page, on: boolean) => {
 
 const pages: Record<string, { anchors: Record<string, unknown> }> = index.pages;
 
-/** Every element marked with <Req> on screen points at a paragraph that exists. */
+/** Every element marked with <Req> on screen points at paragraphs that exist (`to` may name several, comma-separated). */
 export const expectReqs = async (page: Page) => {
   const targets = await page
     .locator("[data-req]")
-    .evaluateAll((els) => els.map((e) => e.getAttribute("data-req") ?? ""));
-  for (const target of targets) {
+    .evaluateAll((els) =>
+      els.flatMap((e) => (e.getAttribute("data-req") ?? "").split(",")),
+    );
+  for (const target of targets.map((x) => x.trim())) {
     const [doc, code = ""] = target.split("#^");
     expect(
       pages[doc]?.anchors[code.toUpperCase()],

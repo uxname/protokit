@@ -3,11 +3,12 @@
 // Coverage — every requirement block has a tag — is docc's own (DOC404, docc 0.7+).
 //   1. No tag sits in a JSX comment `{/* docc: … */}`: docc reads a tag only on a line that
 //      starts with a comment marker and skips those silently, broken targets included.
-//   2. Every `<Req to="…">` target is also a `docc:` tag of the same file, so a change
-//      of the paragraph reaches that file as DOC209.
+//   2. Every `<Req to="…">` target (one, or several separated by commas) is also a `docc:`
+//      tag of the same file, so a change of the paragraph reaches that file as DOC209.
 //   3. Every file of the rules (`src/spec/`) and screens (`src/screens/`) carries a `docc:`
-//      tag, so no edit there passes without a check against the documents. A file with
-//      nothing to show says why on a `// docc-none: <reason>` line.
+//      tag, so no edit there passes without a check against the documents. A region
+//      (`docc:begin`) counts: a rules file whose rules all sit in regions needs no
+//      first-line tag. A file with nothing to show says why on a `// docc-none: <reason>` line.
 // Prints one line per problem and exits 1 when there is any.
 import { existsSync, globSync, readFileSync } from "node:fs";
 
@@ -51,7 +52,9 @@ for (const file of files.sort()) {
   if (MUST_TAG.test(file) && own.size === 0 && !none)
     problems.push(`${file}: no docc tag — every rule and screen file names its paragraphs, or says why not on a "// docc-none: <reason>" line`);
   for (const m of text.matchAll(LINK)) {
-    if (!own.has(m[1].toLowerCase())) problems.push(`${file}: <Req to="${m[1]}"> without "// docc: ${m[1]}" in the same file`);
+    for (const to of m[1].split(",").map((x) => x.trim()).filter(Boolean)) {
+      if (!own.has(to.toLowerCase())) problems.push(`${file}: <Req to="${to}"> without "// docc: ${to}" in the same file`);
+    }
   }
 }
 

@@ -42,9 +42,9 @@ Keep the kit: `src/kit`, `src/ui`, `src/lib/cn.ts`, `src/main.tsx`, `src/index.c
 | File | Exports |
 |---|---|
 | `model.ts` | `Db` — everything the server holds; `DB_VERSION` — raise it whenever `Db` changes shape (a field added, renamed, retyped): a world a browser saved by the older shape is replaced by a fresh `seed()`, not shown half-empty; `Ctx = ProtoCtx<Db>` (`import type` from `@/kit`) |
-| `world.ts` | `seed(): Db` — the starting world; `people(db): Person[]` — whom «People» lists (`note`: email, password, whatever the person holds — a line per item); `EVENTS: Record<id, ProtoEvent<Db>>` — world events |
-| `resolvers.ts` | `resolvers` — root fields of `Query` and `Mutation`; sign-in returns `ctx.tokenFor(id)` |
-| `rules.ts` | the documents' rules; among them `OFFLINE_READS` — which reads answer offline: `true` all (the documents promise reading offline: the app keeps a local copy), `false` none (only what is loaded stays), or `(operation) => boolean` when some reads need the server (checking an invitation code, say) |
+| `world.ts` | `seed(): Db` — the starting world (empty, when the documents start from nothing); `people(db): Person[]` — whom «People» lists (`note`: email, password, whatever the person holds — a line per item), `[]` in a product without sign-in; `EVENTS: Record<id, ProtoEvent<Db>>` — world events |
+| `resolvers.ts` | `resolvers` — root fields of `Query` and `Mutation`; sign-in returns `ctx.tokenFor(id)`. None in a product without a server |
+| `rules.ts` | the documents' rules; among them, with a server, `OFFLINE_READS` — which reads answer offline: `true` all (the documents promise reading offline: the app keeps a local copy), `false` none (only what is loaded stays), or `(operation) => boolean` when some reads need the server (checking an invitation code, say) |
 | `not-shown.ts` | `NOT_SHOWN: { to, why }[]` with tags above the list |
 | `docs.ts` | `DOCS_TARGET.docspace` — `{ url, projectId }` or `null` (links open `docs.html`) |
 | `index.ts` | re-exports all of it |
@@ -58,6 +58,7 @@ Keep the kit: `src/kit`, `src/ui`, `src/lib/cn.ts`, `src/main.tsx`, `src/index.c
 
 - `schema.graphql` — the simulated server's types and operations; `src/graphql/*.graphql`
   — the operations screens use (`npm run gen` types them into `@/generated/graphql`).
+  A product without a server has neither (`npm run gen` then skips).
 - `src/screens/<Screen>.tsx` — screens; `src/components/` — the product's frame and
   shared pieces; `src/routes/` — one file per route:
   `createFileRoute("/path")({ component, head: () => ({ meta: [{ title }] }) })`.
@@ -65,6 +66,21 @@ Keep the kit: `src/kit`, `src/ui`, `src/lib/cn.ts`, `src/main.tsx`, `src/index.c
 - `index.html` — the product's: its name in `<title>` (the routes set their own titles
   over it).
 - `tests/journeys.spec.ts` — the paths (see `references/design.md`).
+
+### A product without sign-in, or without a server
+
+The starting prototype has both; a product whose documents have neither drops them —
+the kit runs without:
+
+- **No sign-in** (no accounts): `people()` returns `[]` — the panel drops «People», the
+  smoke checks skip the per-person ones; no sign-in screen or route; `AppShell` gets no
+  `actions`, so the header holds the name only; the seed holds what a first open shows,
+  which may be nothing.
+- **No server** (the data lives on the device): delete `schema.graphql`, `src/graphql/`,
+  `src/spec/resolvers.ts` and `OFFLINE_READS` with their lines in `src/spec/index.ts`.
+  Screens read `useWorld((s) => s.db)` and write `useWorld((s) => s.update)(rule)` — the
+  browser's storage; the network switch does not reach it. The state table needs no
+  loading, error or offline for it (`references/design.md`).
 
 ## 5. Generate and check
 

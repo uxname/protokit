@@ -1,10 +1,25 @@
-import { buildSchema, graphql } from "graphql";
-import { OFFLINE_READS, resolvers } from "@/spec";
-import sdl from "../../schema.graphql?raw";
+import { buildSchema, type GraphQLSchema, graphql } from "graphql";
+import * as spec from "@/spec";
 import { serverCtx } from "./events";
 import { useWorld } from "./world";
 
-const schema = buildSchema(sdl);
+/**
+ * A product without a server (its data lives in the browser) has no schema.graphql, no
+ * resolvers and no OFFLINE_READS: its screens read and write the world directly. A glob,
+ * not an import: a missing file is an empty match, not a build error.
+ */
+const sdl = Object.values(
+  import.meta.glob<string>("../../schema.graphql", {
+    query: "?raw",
+    import: "default",
+    eager: true,
+  }),
+)[0];
+const { OFFLINE_READS = false, resolvers = {} } = spec as {
+  OFFLINE_READS?: boolean | ((operation: string) => boolean);
+  resolvers?: object;
+};
+let schema: GraphQLSchema | undefined;
 
 /**
  * A real server answers in tens of milliseconds, not at once: loading states get a moment
@@ -25,13 +40,16 @@ const bearer = (headers: HeadersInit | undefined): string | null => {
  * device (`OFFLINE_READS`). The client sends POST only, so the body carries the request.
  */
 export const protoFetch: typeof fetch = async (_input, init) => {
+  if (!sdl) throw new Error("No schema.graphql: this prototype has no server");
+  schema ??= buildSchema(sdl);
   await new Promise((r) => setTimeout(r, latency()));
   const { query, variables, operationName } = JSON.parse(String(init?.body));
   const read = /^\s*(query\b|\{)/.test(query);
-  // Widened: a project may declare a plain `true` or `false`.
-  const rule = OFFLINE_READS as boolean | ((operation: string) => boolean);
   const offlineOk =
-    read && (typeof rule === "function" ? rule(operationName ?? "") : rule);
+    read &&
+    (typeof OFFLINE_READS === "function"
+      ? OFFLINE_READS(operationName ?? "")
+      : OFFLINE_READS);
   if (!useWorld.getState().online && !offlineOk)
     throw new TypeError("Failed to fetch");
   const result = await graphql({

@@ -14,8 +14,9 @@
 /*
  * The shadcn/ui token set (https://ui.shadcn.com/docs/theming), filled with the
  * palette this app already had, tuned for WCAG AA:
- *   - `primary` (L 52%) clears 4.5:1 as text on white and on its own 10% tint,
- *     and with pure white text on it (axe-checked: tests/e2e/a11y.spec.ts).
+ *   - `primary` (L 50%) clears 4.5:1 as text on white and on its own 10% tint,
+ *     and with pure white text on it, also on the 90% fill a button takes under
+ *     the pointer (4.7:1; at L 52% that fill gave 4.42:1).
  *   - `destructive` is dark enough for inline form-error text on white.
  *   - `border` is a touch darker than stock so borders are actually visible.
  *   - `muted-foreground` is the old "70% text" made opaque — AA on `background`
@@ -34,7 +35,7 @@
   --card-foreground: oklch(20% 0 0deg);
   --popover: oklch(100% 0 0deg);
   --popover-foreground: oklch(20% 0 0deg);
-  --primary: oklch(52% 0.15 239.443deg);
+  --primary: oklch(50% 0.15 239.443deg);
   --primary-foreground: oklch(100% 0 0deg);
   --secondary: oklch(95% 0 0deg);
   --secondary-foreground: oklch(20% 0 0deg);
@@ -52,7 +53,7 @@
   --info-foreground: oklch(13.695% 0.018 217.284deg);
   --border: oklch(87% 0 0deg);
   --input: oklch(87% 0 0deg);
-  --ring: oklch(52% 0.15 239.443deg);
+  --ring: oklch(50% 0.15 239.443deg);
 }
 
 [data-theme="dark"] {

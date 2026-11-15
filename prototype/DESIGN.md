@@ -65,8 +65,9 @@ Radii stay the same in both themes.
 - **Platform from the documents.** "Phone", "PWA", "mobile" → design 390 px first:
   bottom navigation (up to 5 items) or list → detail, large tap targets. Otherwise
   desktop first. Both widths always work.
-- **Product frame.** A header with the product name and the person's menu (name,
-  email, "Sign out"); navigation in a bottom bar on a phone, a sidebar on desktop.
+- **Product frame.** A header with the product name and, in a product with sign-in,
+  the person's menu (name, email, "Sign out") — without sign-in the header holds the
+  name only; navigation in a bottom bar on a phone, a sidebar on desktop.
   Sign-in screens have no frame: a centred card on `bg-muted`, the link to the
   neighbouring screen under the card.
 - **Neighbouring screens** (sign in ↔ sign up ↔ code) keep shared elements in the
@@ -80,6 +81,10 @@ Radii stay the same in both themes.
   fixed there (the tab bar, a floating button) — and the kit's toaster rises over it.
 
 ## States — every list and every request
+
+Loading, error and offline belong to a request to the server. What a screen reads from
+the browser's storage (a product without a server) shows at once and never fails: it
+has empty and done, nothing else.
 
 | State | What to render |
 |---|---|
@@ -104,7 +109,9 @@ deadline state — so every rule appears on some screenshot.
 
 - Visible focus everywhere: `outline-none focus-visible:ring-[3px] focus-visible:ring-ring` (the primitives have it). Solid, not `ring-ring/50`: at half strength the ring falls under the 3:1 contrast WCAG 2.2 AA asks of a focus mark.
 - Menu items are 44 px tall on a touch screen (`pointer-coarse:min-h-11`, in the primitive): a finger needs the room a mouse does not.
-- A skip link to `#content`; one `<main>`; one `<h1>` per screen, no skipped levels.
+- The skip button of `AppShell` ("Skip to content", at least 24 px tall, in the
+  documents' language) moves the focus to `#content`; a `href="#content"` link would
+  change the hash route. One `<main>`; one `<h1>` per screen, no skipped levels.
 - Every icon-only control has an `aria-label`; `aria-label` only on elements with a role (on a `span`, use `sr-only` text).
 - Anything clickable is a `<button>` or a link.
 - Meaning never rides on colour alone.
@@ -132,6 +139,7 @@ and dark):
 
 - [ ] nothing overflows, nothing is clipped, nothing overlaps;
 - [ ] dark theme: every surface separates from the one under it;
-- [ ] loading, empty, error and offline are each reachable and rendered as above;
+- [ ] empty, and for a request to the server loading, error and offline, are each
+      reachable and rendered as above;
 - [ ] same spacing, buttons and type as the neighbouring screens;
 - [ ] no service text, no fake data, no dead end.

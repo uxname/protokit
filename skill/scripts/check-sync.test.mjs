@@ -51,7 +51,21 @@ try {
   r = run();
   assert.equal(r.status, 1);
   assert.match(r.stdout, /<Req to="rules#\^other"> without/);
-  console.log("check-sync.test: 7 cases passed");
+  // One Req may name several paragraphs; each must be a tag of the file.
+  put("prototype/src/A.tsx", `${good}export const D = () => <Req to="rules#^KF2M, s1#^S9GN"><b /></Req>;\n`);
+  r = run();
+  assert.equal(r.status, 0, r.stdout);
+  put("prototype/src/A.tsx", `${good}export const D = () => <Req to="rules#^KF2M, s1#^gone"><b /></Req>;\n`);
+  r = run();
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /<Req to="s1#\^gone"> without/);
+
+  // A rules file whose rules all sit in regions needs no first-line tag.
+  put("prototype/src/A.tsx", good);
+  put("prototype/src/spec/rules.ts", "// docc:begin rules#^kf2m@aaaa ~eeee\nexport const LOCK = 5;\n// docc:end\n");
+  r = run();
+  assert.equal(r.status, 0, r.stdout);
+  console.log("check-sync.test: 10 cases passed");
 } finally {
   rmSync(dir, { recursive: true, force: true });
 }

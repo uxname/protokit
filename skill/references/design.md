@@ -28,9 +28,12 @@ Every step is a person's action or a world event. What a person cannot do is an
 - **People** (`seed`) — every role of the documents that has screens, plus neighbours
   to interact with. Real-looking names, emails, passphrases. What a person knows or
   holds — a password, a paper recovery sheet, a key — goes into their `note` in
-  «People» (a line per item) and nowhere else.
+  «People» (a line per item) and nowhere else. A product without sign-in has no
+  people: `people()` returns `[]`, and the panel drops «People».
 - **History** — 5–12 records per person dated in the past relative to `now()`: lists are
   not empty, deadlines differ, something is unread. Empty states belong to a new person.
+  Where the documents say the first open starts from nothing ("0 on the first open", a
+  new device), the seed is that nothing: the history comes from the path's own steps.
 - **Letters and texts** — wherever the documents say "a code arrives", "a notification",
   "an invitation": `ctx.send({ to, subject, body, code?, actions? })`.
 - **Events** — what an operator, the server, outside systems do: one event for every
@@ -47,8 +50,8 @@ Every step is a person's action or a world event. What a person cannot do is an
 ## 3. Screens
 
 Follow `prototype/DESIGN.md`. In short: the platform from the documents (phone first
-for "phone", "PWA", "mobile"); a product frame; loading, empty, error, offline for every
-list and request; a way out of every wait; one place for what neighbouring screens
+for "phone", "PWA", "mobile"); a product frame; empty for every list, and loading,
+error, offline for every request to the server; a way out of every wait; one place for what neighbouring screens
 share; dark-theme contrast `bg-card` + `border` on `bg-muted`; "not found" for a wrong
 address; the product's voice in every text.
 
@@ -59,16 +62,18 @@ path takes the product without the panel: 390×844 and 1280×800, light and dark
 `screens/*.png` (a folder of its own: Playwright empties `test-results/` on every run, a partial one included). Wait for the consequences of the action first (a counter
 reset, a toast shown), otherwise the themes are shot in different states. Minimum: the
 first screen, every screen of the main tasks, every error and empty state on the
-paths, offline, and one loading state: `slowServer(page, 10_000)`, act, `shot`,
-`slowServer(page, null)`. A state no path can reach (an error the world never
+paths and, when the product asks a server, offline and one loading state:
+`slowServer(page, 10_000)`, act, `shot`, `slowServer(page, null)`. A state no path can reach (an error the world never
 produces) is not invented for the shot: it goes to the critic's "Accepted decisions"
 with the reason, and the code for it stays. `shot` takes 390 and 1280 only: the narrow
 320 is a test's — the paths check that every main screen does not scroll sideways at 320.
 
 **The state table.** Before the critic, write `tests/states.md` (committed next to the paths): one row per list or
-request on each screen, one column per state that applies to it — loading, empty,
-error, offline, in progress, done — and in each cell the screenshot that shows it, or
-"unreachable: <why>". An empty cell is a missing shot: add it to a path. The table goes
+request on each screen, one column per state — loading, empty, error, offline, in
+progress, done — and in each cell the screenshot that shows it, or "unreachable:
+<why>". Loading, error and offline belong to a request to the server: a row the screen
+reads from the browser's storage (a product without a server) puts `—` there, with no
+reason and no shot. Any other empty cell is a missing shot: add it to a path. The table goes
 to the critic with the screenshots, so a missing state is a fact on paper, not
 something the critic has to notice.
 
@@ -87,8 +92,8 @@ Visual readiness is accepted by someone who did not build it. Start a separate a
 > the edge, unreadable contrast in the dark theme, no loading or error state,
 > contradicting text, a dead end, inconsistent spacing, buttons or type between screens,
 > fake data ("Test User", "Lorem"), a phone screen laid out as a shrunken desktop. A
-> feature the documents do not have is not a blocker: note it as a question to the
-> documents. The kit's design tokens (`src/index.css`) are not a blocker. Built-in
+> feature or behaviour the documents do not have is not a blocker: note it as a
+> question to the documents. The kit's design tokens (`src/index.css`) are not a blocker. Built-in
 > browser controls (the date field's placeholder) speak the headless browser's
 > language: not a blocker. Accepted decisions are not blockers: <decisions from earlier
 > rounds with reasons>. Check the state table against the screenshots: a state marked as
@@ -100,10 +105,22 @@ screen (the `<nn>-<screen>` names; neighbouring screens in one group, so their s
 elements are compared), one critic per group, each with its screens' rows of the state
 table. Done when every group is at 0 blockers.
 
+### The critic's remarks
+
+| Remark | Goes |
+|---|---|
+| a blocker, or a minor note on the look: spacing, contrast, alignment, a text the documents do not fix, a missing state of something the documents describe | fixed in the prototype; a rejected one goes to "Accepted decisions" with the reason |
+| what the product should do or show that the documents do not say: a feature, a step, a rule, a confirmation, a choice between two behaviours, a word the documents fix differently | a question to the documents — the screen stays as the documents have it, the prototype does not invent the answer |
+| the kit's own look (tokens, panel) | not the product's: a kit issue at protokit, named in the report |
+
+A question to the documents is asked where the project asks them: in the report, or in
+the project's queue of questions when it has one (crew: a question to the PRD in
+`docs/src/inbox/`).
+
 Fix the blockers, shoot again and hand the new screenshots to **the same** critic
 (continue its conversation, do not start a new one): it remembers what it accepted and
 looks only at what changed — hand it only the changed screenshots of its group. A new
 agent every round finds new "blockers" in what was accepted and costs a full review each
 time. A note you reject on purpose goes to
 "Accepted decisions" with the reason. Done at 0 blockers. Fix minor notes when cheap;
-questions to the documents go to the report.
+questions to the documents go where the table above says.

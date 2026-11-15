@@ -85,10 +85,13 @@ const drag = (
  */
 export const ProtoPanel: FC = () => {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<Tab>("people");
   const docsMode = useDocsMode((s) => s.on);
   const setDocsMode = useDocsMode((s) => s.set);
   const db = useWorld((s) => s.db);
+  // A product without sign-in lists nobody: no «People», every tab is the device's owner.
+  const tabs = TABS.filter((id) => id !== "people" || people(db).length > 0);
+  const [chosen, setTab] = useState<Tab>(tabs[0]);
+  const tab = tabs.includes(chosen) ? chosen : tabs[0];
   const unread = useWorld((s) => s.inbox.filter((m) => !m.read).length);
   const me = accountOf(useSession((s) => s.token));
   const name = people(db).find((p) => p.id === me)?.name ?? t.stranger;
@@ -207,10 +210,13 @@ export const ProtoPanel: FC = () => {
               </span>
             </header>
             <nav
-              className="grid grid-cols-4 gap-1 border-b p-1.5"
+              className={cn(
+                "grid gap-1 border-b p-1.5",
+                tabs.length === 4 ? "grid-cols-4" : "grid-cols-3",
+              )}
               aria-label={t.sections}
             >
-              {TABS.map((id) => (
+              {tabs.map((id) => (
                 <button
                   key={id}
                   type="button"
